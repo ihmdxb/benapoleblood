@@ -1,0 +1,2149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BenapoleBlood</title>
+    <meta name="description" content="BenapoleBlood connects blood donors with patients across Bangladesh. Find verified donors, post urgent requests and track your donations.">
+    <meta name="theme-color" content="#0B6B83">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta property="og:title" content="BenapoleBlood - Find Blood Donors Near You">
+    <meta property="og:description" content="Find donors, post urgent blood requests and save lives.">
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+    tailwind.config = { theme: { extend: {
+        fontFamily: { sans: ['"Plus Jakarta Sans"','"Hind Siliguri"','system-ui','sans-serif'] },
+        colors: {
+            rose: {50:'#EFF8FA',100:'#D8EEF2',200:'#B3DDE5',300:'#84C6D3',400:'#4BA5B8',500:'#218AA0',600:'#0E7490',700:'#0B5D74',800:'#0A4A5E',900:'#083A4B'}
+        },
+        borderRadius: { xl:'12px', '2xl':'14px', '3xl':'18px' },
+        boxShadow: { sm:'0 1px 2px rgba(22,26,35,.06)', md:'0 2px 8px rgba(22,26,35,.07)', lg:'0 6px 20px rgba(22,26,35,.09)', xl:'0 10px 30px rgba(22,26,35,.12)', '2xl':'0 16px 48px rgba(22,26,35,.16)' }
+    } } }
+    </script>
+    
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        body { font-family: 'Poppins', sans-serif; background-color: #f1f5f9; -webkit-tap-highlight-color: transparent; }
+        ::-webkit-scrollbar { width: 0px; background: transparent; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .splash-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0E7490; display: flex; justify-content: center; align-items: center; flex-direction: column; z-index: 50; transition: opacity 0.5s ease; }
+        
+        /* Loading Spinner */
+        .loader { border: 3px solid #f3f3f3; border-radius: 50%; border-top: 3px solid #0E7490; width: 20px; height: 20px; animation: spin 1s linear infinite; display: none; }
+        .loader.inline-block { display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Modal Animation */
+        .modal-enter { animation: slideUp 0.3s ease-out forwards; }
+        @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        /* Admin Sidebar Styles */
+    
+        :focus-visible { outline: 2px solid #0E7490; outline-offset: 2px; }
+        @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+        #offline-banner { position: fixed; top: 0; left: 0; right: 0; z-index: 120; background: #1e293b; color: #fff; font-size: 12px; text-align: center; padding: 6px; transform: translateY(-100%); transition: transform .3s; }
+        #offline-banner.show { transform: translateY(0); }
+        .compat-table td, .compat-table th { padding: 8px 6px; text-align: center; border-bottom: 1px solid #f1f5f9; }
+        .compat-table th { font-size: 11px; color: #64748b; font-weight: 600; }
+    </style>
+<style id="redesign">
+        :root { --ink:#0F2A35; --muted:#6B7280; --line:#E7E9EE; --paper:#F5F6F8; --crimson:#0E7490; --crimson-d:#8F0E24; }
+        body { font-family:'Plus Jakarta Sans','Hind Siliguri',system-ui,sans-serif; background:#E9EBEF; color:var(--ink); letter-spacing:-.005em; }
+        .splash-screen { background:var(--crimson); }
+        #auth-page { background:linear-gradient(180deg,#E3F2F6 0,var(--paper) 45%); }
+        .logo-mark { width:34px; height:34px; border-radius:10px; background:var(--crimson); color:#fff; display:grid; place-items:center; font-size:15px; }
+        .hero { background:var(--crimson); color:#fff; border-radius:0 0 28px 28px; padding:22px 22px 26px; position:relative; overflow:hidden; }
+        .hero::after { content:""; position:absolute; right:-70px; top:-70px; width:220px; height:220px; border-radius:50%; border:1px solid rgba(255,255,255,.16); box-shadow:0 0 0 38px rgba(255,255,255,.05); pointer-events:none; }
+        .drop { width:74px; height:74px; background:#fff; color:var(--crimson); border-radius:50% 50% 50% 10%; transform:rotate(-45deg); display:grid; place-items:center; box-shadow:0 10px 26px rgba(0,0,0,.2); }
+        .drop span { transform:rotate(45deg); font-weight:800; font-size:22px; letter-spacing:-.03em; }
+        .btn-solid, .btn-ghost { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:13px 10px; border-radius:12px; font-size:13px; font-weight:700; transition:transform .15s; }
+        .btn-solid { background:#fff; color:var(--crimson); } .btn-ghost { border:1px solid rgba(255,255,255,.45); color:#fff; }
+        .btn-solid:active, .btn-ghost:active { transform:scale(.97); }
+        .sec-title { font-size:13px; font-weight:700; color:var(--ink); margin:22px 2px 10px; }
+        .tile { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid var(--line); border-radius:14px; padding:14px; text-align:left; width:100%; transition:border-color .15s; }
+        .tile:hover { border-color:#BFE0E8; } .tile:active { transform:scale(.98); }
+        .tile .ic { width:40px; height:40px; border-radius:11px; background:#E3F2F6; color:var(--crimson); display:grid; place-items:center; font-size:16px; flex-shrink:0; }
+        .tile b { display:block; font-size:13px; font-weight:700; } .tile small { display:block; font-size:11px; color:var(--muted); margin-top:1px; }
+        .tool { background:#fff; border:1px solid var(--line); border-radius:14px; padding:12px 4px; text-align:center; display:block; }
+        .tool i { color:var(--crimson); font-size:17px; } .tool span { display:block; font-size:10.5px; font-weight:600; color:#4B5563; margin-top:6px; }
+        .note { display:flex; gap:12px; align-items:flex-start; background:#fff; border:1px solid var(--line); border-left:3px solid var(--crimson); border-radius:12px; padding:12px 14px; font-size:12px; color:#4B5563; line-height:1.55; }
+        #global-header { box-shadow:none !important; }
+        .bottom-nav { border-top:1px solid var(--line); }
+        .nav-btn { min-width:56px; font-weight:600; }
+    </style>
+<style id="premium">
+        :root { --crimson:#0E7490; --crimson-d:#0A5568; --gold:#4BA5B8; --gold-l:#D3EBF1; --ink:#0F2A35; --paper:#F2F7F9; --line:#DDE7EC; }
+        body { background:#E6EDF1; }
+        /* ---------- keyframes ---------- */
+        @keyframes rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+        @keyframes pop { 0% { transform:scale(.6); } 60% { transform:scale(1.18); } 100% { transform:scale(1); } }
+        @keyframes beat { 0%,100% { transform:rotate(-45deg) scale(1); } 14% { transform:rotate(-45deg) scale(1.08); } 28% { transform:rotate(-45deg) scale(1); } 42% { transform:rotate(-45deg) scale(1.05); } }
+        @keyframes ring { 0% { box-shadow:0 0 0 0 rgba(75,165,184,.5); } 100% { box-shadow:0 0 0 26px rgba(75,165,184,0); } }
+        @keyframes badgeRing { 0% { box-shadow:0 0 0 0 rgba(14,116,144,.55); } 100% { box-shadow:0 0 0 9px rgba(14,116,144,0); } }
+        @keyframes sweep { from { transform:translateX(-140%) skewX(-20deg); } to { transform:translateX(380%) skewX(-20deg); } }
+        @keyframes drift { from { background-position:0% 50%; } to { background-position:100% 50%; } }
+        @keyframes splashRing { 0% { transform:scale(.7); opacity:.55; } 100% { transform:scale(2.6); opacity:0; } }
+        @keyframes sheet { from { transform:translateY(100%); opacity:0; } to { transform:translateY(0); opacity:1; } }
+        @keyframes fade { from { opacity:0; } to { opacity:1; } }
+        @keyframes grow { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+        @keyframes ripple { to { transform:scale(3.2); opacity:0; } }
+        /* ---------- splash ---------- */
+        .splash-screen { background:linear-gradient(160deg,#083A4B 0%,#0E7490 100%); }
+        .splash-logo { position:relative; width:84px; height:84px; border-radius:26px; background:linear-gradient(135deg,#FFFFFF,#BFE3EC); color:#0A5568; display:grid; place-items:center; font-size:38px; margin-bottom:22px; animation:pop .7s cubic-bezier(.2,.9,.3,1.2) both; box-shadow:0 14px 40px rgba(0,0,0,.3); }
+        .splash-logo::before, .splash-logo::after { content:""; position:absolute; inset:0; border-radius:inherit; border:1px solid rgba(211,235,241,.6); animation:splashRing 2.2s ease-out infinite; }
+        .splash-logo::after { animation-delay:1.1s; }
+        .splash-word { color:#fff; font-size:30px; font-weight:800; letter-spacing:-.02em; animation:rise .7s .35s both; }
+        .splash-tag { color:var(--gold-l); font-size:13px; margin-top:8px; opacity:.85; animation:rise .7s .55s both; }
+        /* ---------- brand surfaces ---------- */
+        .logo-mark { background:linear-gradient(135deg,#0E7490,#0A5568); box-shadow:inset 0 0 0 1px rgba(211,235,241,.35); }
+        #auth-page { background:linear-gradient(180deg,#E3F2F6 0,var(--paper) 45%); }
+        .hero { background:linear-gradient(135deg,#083A4B 0%,#0B6B83 40%,#128AA8 75%,#0B6B83 100%); background-size:220% 220%; animation:drift 16s ease-in-out infinite alternate; border-bottom:1px solid rgba(75,165,184,.55); }
+        .hero::after { border-color:rgba(75,165,184,.25); box-shadow:0 0 0 38px rgba(75,165,184,.06); }
+        .hero > div { animation:rise .7s cubic-bezier(.2,.7,.2,1) both; } .hero > div:nth-child(2) { animation-delay:.15s; }
+        .drop { position:relative; background:linear-gradient(135deg,#FFFFFF,#D3EBF1); border:2px solid rgba(75,165,184,.9); color:#0A5568; animation:beat 3.2s ease-in-out 1s infinite; }
+        .drop::before { content:""; position:absolute; inset:-2px; border-radius:inherit; animation:ring 3.2s ease-out 1s infinite; }
+        .btn-solid { position:relative; overflow:hidden; background:linear-gradient(135deg,#FFFFFF,#BFE3EC); color:#083A4B; box-shadow:0 6px 18px rgba(0,0,0,.22); }
+        .btn-solid::after { content:""; position:absolute; top:0; bottom:0; width:36px; background:rgba(255,255,255,.55); animation:sweep 4.5s ease-in-out 1.6s infinite; }
+        .btn-ghost { border-color:rgba(211,235,241,.55); backdrop-filter:blur(4px); }
+        /* ---------- home stagger ---------- */
+        #page-home .px-5 > * { animation:rise .6s cubic-bezier(.2,.7,.2,1) both; }
+        #page-home .px-5 > :nth-child(1) { animation-delay:.12s; } #page-home .px-5 > :nth-child(2) { animation-delay:.2s; }
+        #page-home .px-5 > :nth-child(3) { animation-delay:.28s; } #page-home .px-5 > :nth-child(4) { animation-delay:.36s; }
+        #page-home .px-5 > :nth-child(5) { animation-delay:.44s; } #page-home .px-5 > :nth-child(6) { animation-delay:.52s; }
+        #elig-bar { transition:width 1.2s cubic-bezier(.2,.7,.2,1) .3s; }
+        .tile, .tool { transition:transform .2s, box-shadow .2s, border-color .2s; }
+        .tile:hover, .tool:hover { transform:translateY(-3px); border-color:var(--gold); box-shadow:0 10px 24px rgba(10,85,104,.12); }
+        .tile .ic { background:linear-gradient(135deg,#E3F2F6,#BFE0E8); transition:background .25s, color .25s; }
+        .tile:hover .ic { background:linear-gradient(135deg,#0E7490,#0A5568); color:#fff; }
+        .note { border-left-color:var(--gold); }
+        /* ---------- feeds, lists, pages ---------- */
+        .fade-in { animation:rise .45s cubic-bezier(.2,.7,.2,1) both; }
+        div[onclick^="openRequestModal"], div[onclick^="openDonorModal"] { animation:rise .5s cubic-bezier(.2,.7,.2,1) both; transition:transform .2s, box-shadow .2s; }
+        div[onclick^="openRequestModal"]:hover, div[onclick^="openDonorModal"]:hover { box-shadow:0 10px 24px rgba(10,85,104,.12); }
+        div[onclick^="openRequestModal"]:nth-child(2), div[onclick^="openDonorModal"]:nth-child(2) { animation-delay:.06s; }
+        div[onclick^="openRequestModal"]:nth-child(3), div[onclick^="openDonorModal"]:nth-child(3) { animation-delay:.12s; }
+        div[onclick^="openRequestModal"]:nth-child(4), div[onclick^="openDonorModal"]:nth-child(4) { animation-delay:.18s; }
+        div[onclick^="openRequestModal"]:nth-child(5), div[onclick^="openDonorModal"]:nth-child(5) { animation-delay:.24s; }
+        div[onclick^="openRequestModal"]:nth-child(n+6), div[onclick^="openDonorModal"]:nth-child(n+6) { animation-delay:.3s; }
+        /* ---------- nav, badge, modals ---------- */
+        .bottom-nav { box-shadow:0 -8px 24px rgba(20,18,26,.06); }
+        .nav-btn { position:relative; transition:color .2s; }
+        .nav-btn.text-rose-600::before { content:""; position:absolute; top:-9px; left:50%; width:20px; height:3px; margin-left:-10px; border-radius:0 0 4px 4px; background:var(--gold); animation:grow .35s ease-out both; }
+        .nav-btn.text-rose-600 i { animation:pop .4s ease-out; }
+        .bottom-nav > button[aria-label="New request"] { background:linear-gradient(135deg,#0E7490,#0A5568); box-shadow:0 10px 22px rgba(10,85,104,.4); transition:transform .2s; }
+        .bottom-nav > button[aria-label="New request"]:hover { transform:translateY(-2px) rotate(90deg); }
+        #notif-badge { animation:badgeRing 1.8s ease-out infinite; }
+        .modal-enter { animation:sheet .45s cubic-bezier(.2,.9,.25,1) both; }
+        [id$="-modal"] > .absolute.inset-0 { animation:fade .3s both; }
+        .rip { position:absolute; border-radius:50%; background:rgba(255,255,255,.45); width:40px; height:40px; margin:-20px 0 0 -20px; pointer-events:none; animation:ripple .6s ease-out forwards; }
+        button.bg-rose-600, a.bg-rose-600 { background-image:linear-gradient(135deg,#0E7490,#0E7490); }
+    </style>
+<style id="polish">
+        /* ---- compact home ---- */
+        #global-header { padding-top:10px; padding-bottom:10px; }
+        .hero { padding:14px 18px 18px; border-radius:0 0 10px 10px; }
+        .hero h2 { font-size:22px; margin-top:2px; }
+        .hero p { font-size:12.5px; }
+        .hero p.text-xs { font-size:11.5px; }
+        .hero > div:nth-child(2) { margin-top:14px !important; }
+        .hero .mr-2 { margin-right:4px; }
+        .drop { width:58px; height:58px; border-radius:50% 0 50% 50%; border-width:1.5px; }
+        .drop span { font-size:17px; }
+        .btn-solid, .btn-ghost { padding:10px 8px; font-size:12.5px; border-radius:11px; }
+        #page-home .px-5 { padding:12px 16px 0 !important; }
+        #elig-card { padding:11px 12px !important; gap:12px !important; }
+        #elig-icon { width:38px; height:38px; font-size:16px; }
+        #elig-bar { height:100%; } #elig-card .h-1\.5 { height:5px; margin-top:6px; }
+        .sec-title { margin:16px 2px 8px; font-size:12.5px; }
+        #page-home .grid { gap:8px !important; }
+        .tile { padding:10px 12px; gap:10px; border-radius:12px; }
+        .tile .ic { width:34px; height:34px; border-radius:10px; font-size:14px; }
+        .tile b { font-size:12.5px; } .tile small { font-size:10.5px; }
+        .tool { padding:9px 2px; border-radius:12px; } .tool i { font-size:15px; } .tool span { font-size:10px; margin-top:4px; }
+        #page-home .note { margin-top:14px !important; padding:10px 12px; font-size:11.5px; }
+        /* ---- floating navigation ---- */
+        .bottom-nav { left:12px; right:12px; bottom:12px; width:auto !important; max-width:calc(28rem - 24px) !important; margin-inline:auto;
+            border:1px solid var(--line); border-radius:22px; padding:6px !important; align-items:center !important; gap:2px;
+            box-shadow:0 12px 32px rgba(20,18,26,.14); background:rgba(255,255,255,.94); backdrop-filter:blur(10px); }
+        .nav-btn { flex-direction:row !important; gap:7px; padding:10px 12px; border-radius:16px; min-width:0; transition:background .25s, color .25s, padding .25s; }
+        .nav-btn i { margin:0 !important; font-size:17px; }
+        .nav-btn span { display:none; font-size:12px; font-weight:700; white-space:nowrap; }
+        .nav-btn.text-rose-600 { background:#E3F2F6; padding:10px 14px; }
+        .nav-btn.text-rose-600 span { display:inline; animation:fade .3s both; }
+        .nav-btn.text-rose-600::before { content:none; }
+        .bottom-nav > button[aria-label="New request"] { top:0 !important; width:46px; height:46px; border:0 !important; border-radius:16px; box-shadow:0 6px 16px rgba(10,85,104,.35); }
+        .bottom-nav > button[aria-label="New request"]:hover { transform:rotate(90deg); }
+    </style>
+<style id="alive">
+        @keyframes shimmer { from { background-position:200% 0; } to { background-position:-200% 0; } }
+        @keyframes liveRing { 0% { box-shadow:0 0 0 0 rgba(22,163,74,.55); } 100% { box-shadow:0 0 0 8px rgba(22,163,74,0); } }
+        @keyframes ecg { from { stroke-dashoffset:100; } to { stroke-dashoffset:-100; } }
+        @keyframes slideIn { from { opacity:0; transform:translateX(18px); } to { opacity:1; transform:none; } }
+        @keyframes urgentGlow { 0%,100% { box-shadow:0 0 0 0 rgba(14,116,144,0); } 50% { box-shadow:0 0 0 4px rgba(14,116,144,.14); } }
+        .ecg { position:absolute; left:0; right:0; bottom:2px; width:100%; height:26px; z-index:0; opacity:.45; pointer-events:none; }
+        .ecg path { fill:none; stroke:#BFE3EC; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; stroke-dasharray:28 72; animation:ecg 3.4s linear infinite; vector-effect:non-scaling-stroke; }
+        .drop { margin:10px 10px 0 0; }
+        .stat { flex:1; background:#fff; border:1px solid var(--line); border-radius:12px; padding:9px 10px; }
+        .stat b { display:block; font-size:18px; font-weight:800; color:var(--crimson); line-height:1.1; }
+        .stat span { display:block; font-size:10px; color:var(--muted); margin-top:2px; }
+        .live-dot { width:8px; height:8px; border-radius:50%; background:#16A34A; animation:liveRing 1.6s ease-out infinite; }
+        .live-strip { display:flex; gap:10px; overflow-x:auto; scroll-snap-type:x mandatory; margin:0 -16px; padding:2px 16px 6px; }
+        .live-card { flex:0 0 78%; scroll-snap-align:start; background:#fff; border:1px solid var(--line); border-radius:14px; padding:11px 12px; text-align:left; animation:slideIn .5s cubic-bezier(.2,.7,.2,1) both; position:relative; }
+        .live-card.urgent { border-color:#9ACFDB; animation:slideIn .5s both, urgentGlow 2.4s ease-in-out 1s infinite; }
+        .live-card .top { display:flex; align-items:center; justify-content:space-between; margin-bottom:8px; }
+        .live-card .bg { min-width:36px; height:30px; padding:0 9px; border-radius:9px; background:linear-gradient(135deg,#0E7490,#0A5568); color:#fff; font-weight:800; font-size:14px; display:grid; place-items:center; }
+        .live-card .tm { font-size:10.5px; color:var(--muted); }
+        .live-card b { display:block; font-size:13px; font-weight:700; color:var(--ink); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .live-card small { display:block; font-size:11px; color:var(--muted); margin-top:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .live-card .tag { display:inline-block; margin-top:7px; font-size:9.5px; font-weight:700; color:var(--crimson); background:#E3F2F6; padding:2px 7px; border-radius:20px; }
+        .live-empty { flex:1; text-align:center; font-size:12px; color:var(--muted); background:#fff; border:1px dashed #D9D5DC; border-radius:14px; padding:18px 12px; }
+        .skel { background:linear-gradient(90deg,#E6EDF1 25%,#F7F6F8 50%,#E6EDF1 75%); background-size:200% 100%; animation:shimmer 1.4s linear infinite; border-radius:14px; }
+        #page-home .px-5 > :nth-child(n+7) { animation-delay:.6s; }
+        /* keep content clear of the floating nav */
+        #main-app .pb-20, #main-app .pb-24 { padding-bottom:7.5rem !important; }
+        #page-home { padding-bottom:7.5rem !important; }
+    </style>
+<style id="pro">
+        :root { --crimson:#0E7490; --paper:#F2F7F9; --line:#DDE7EC; }
+        /* calm, flat surfaces */
+        .logo-mark { background:var(--crimson); box-shadow:none; border-radius:9px; }
+        button.bg-rose-600, a.bg-rose-600 { background-image:none; }
+        .bottom-nav > button[aria-label="New request"] { background:var(--crimson); box-shadow:0 4px 12px rgba(10,85,104,.3); }
+        .tile .ic { background:#E6F4F7; } .tile:hover .ic { background:var(--crimson); }
+        .tile:hover, .tool:hover { transform:none; border-color:#A9D3DD; box-shadow:none; }
+        .note { border-left-color:var(--crimson); }
+        #page-home { background:var(--paper) !important; }
+        /* hero */
+        .hero { background:#0C6A82; animation:none; border-bottom:0; padding:14px 16px 16px; border-radius:0 0 20px 20px; }
+        .hero::after, .ecg { display:none; }
+        .hero > div:first-child { align-items:center !important; }
+        .hero p.text-xs { font-size:11.5px; opacity:.75; }
+        .hero h2 { font-size:21px; letter-spacing:-.02em; }
+        .bgroup { background:rgba(255,255,255,.1); border:1px solid rgba(255,255,255,.28); border-radius:12px; padding:6px 14px; text-align:center; color:#fff; }
+        .bgroup span { display:block; font-size:20px; font-weight:800; line-height:1.15; letter-spacing:-.02em; }
+        .bgroup small { display:block; font-size:9.5px; opacity:.75; margin-top:1px; }
+        .btn-solid { background:#fff; color:var(--crimson); box-shadow:none; border-radius:10px; padding:11px 8px; }
+        .btn-solid::after { display:none; }
+        .btn-ghost { border:1px solid rgba(255,255,255,.4); border-radius:10px; padding:11px 8px; backdrop-filter:none; }
+        /* stats as one divided card */
+        .stats { display:flex; background:#fff; border:1px solid var(--line); border-radius:14px; }
+        .stat { background:none; border:0; border-radius:0; padding:11px 14px; }
+        .stat + .stat { border-left:1px solid var(--line); }
+        .stat b { font-size:19px; color:var(--ink); }
+        .stat span { font-size:10.5px; }
+        /* live requests */
+        .live-strip { scroll-padding-left:16px; gap:8px; padding-bottom:4px; }
+        .live-card { flex:0 0 84%; display:flex; align-items:center; gap:12px; padding:11px 12px; border-radius:14px; }
+        .live-card.urgent { border-color:var(--line); border-left:3px solid var(--crimson); animation:slideIn .5s both; }
+        .live-card .bg { flex-shrink:0; width:42px; height:42px; padding:0; border-radius:11px; background:#E6F4F7; color:var(--crimson); font-size:14px; }
+        .live-card .info { flex:1; min-width:0; }
+        .live-card b { font-size:13px; } .live-card small { font-size:11px; }
+        .live-card em { display:flex; align-items:center; gap:6px; font-style:normal; font-size:10.5px; font-weight:600; color:var(--muted); margin-top:5px; }
+        .live-card em .dot { width:6px; height:6px; border-radius:50%; background:var(--crimson); margin-right:-1px; }
+        .live-card.urgent em { color:var(--crimson); }
+        .live-card em span { font-weight:500; color:var(--muted); } .live-card em span::before { content:"\00B7"; margin-right:6px; }
+        .live-card .chev { font-size:11px; color:#B9B6BF; }
+        .live-card .top, .live-card .tag { display:none; }
+        .sec-title { font-size:13px; }
+    </style>
+<style id="nav2">
+        /* every tab shows its label */
+        .bottom-nav { padding:6px 6px !important; gap:0; }
+        .nav-btn { flex:1; flex-direction:column !important; gap:3px !important; padding:7px 4px !important; border-radius:14px; justify-content:center; }
+        .nav-btn i { font-size:18px !important; line-height:1; }
+        .nav-btn span { display:block !important; font-size:10.5px !important; font-weight:600; line-height:1.1; animation:none !important; }
+        .nav-btn.text-gray-400 { color:#6B7280 !important; }
+        .nav-btn.text-rose-600 { background:#E6F4F7; padding:7px 4px !important; }
+        .nav-btn.text-rose-600 span { font-weight:700; }
+        .bottom-nav > button[aria-label="New request"] { flex:0 0 auto; width:48px; height:48px; margin:0 6px; top:-8px !important; border-radius:15px; }
+        .bottom-nav > button[aria-label="New request"] { position:relative; }
+    </style>
+<style id="clinic">
+        @keyframes badgeRingRed { 0% { box-shadow:0 0 0 0 rgba(214,69,69,.5); } 100% { box-shadow:0 0 0 9px rgba(214,69,69,0); } }
+        /* blood and emergencies stay red; everything else is clinical blue-teal */
+        #modal-blood, #req-modal-blood, #profile-bg, span.text-rose-600.font-black { color:#C62828 !important; }
+        .live-card .bg { background:#FDECEC; color:#C62828; }
+        .live-card.urgent { border-left-color:#D64545 !important; }
+        .live-card.urgent em { color:#C62828; } .live-card em .dot { background:#D64545; }
+        #notif-badge { background:#D64545 !important; animation-name:badgeRingRed; }
+        .hero { background:linear-gradient(135deg,#0B6B83,#0E7490); }
+        .btn-solid { color:#0B5D74; }
+        .stat b, .sec-title { color:#0F2A35; }
+        .note { border-left-color:#0E7490; }
+        #page-home { background:#F2F7F9 !important; }
+    </style>
+<style id="topbar">
+        /* top bar blends into the hero */
+        #global-header { background:#0B6B83 !important; border-bottom:0 !important; }
+        #global-header h1 { color:#fff !important; }
+        #global-header .logo-mark { background:#fff; color:#0B6B83; }
+        #global-header button[aria-label="Notifications"] { background:rgba(255,255,255,.12); border:1px solid rgba(255,255,255,.3); }
+        #global-header .fa-bell { color:#fff !important; }
+        #global-header #notif-badge { border-color:#0B6B83 !important; }
+        .hero { background:linear-gradient(180deg,#0B6B83 0%,#0E7490 100%) !important; }
+    </style>
+<style id="hdr">
+        @keyframes dropIn { from { transform:translateY(-100%); opacity:0; } to { transform:none; opacity:1; } }
+        @keyframes lub { 0%,48%,100% { transform:scale(1); } 8% { transform:scale(1.2); } 16% { transform:scale(1); } 24% { transform:scale(1.14); } 32% { transform:scale(1); } }
+        @keyframes logoRing { 0% { transform:scale(1); opacity:.5; } 100% { transform:scale(1.7); opacity:0; } }
+        @keyframes bell { 0%,86%,100% { transform:rotate(0); } 89% { transform:rotate(14deg); } 92% { transform:rotate(-12deg); } 95% { transform:rotate(7deg); } }
+        @keyframes popIn { from { opacity:0; transform:scale(.7); } to { opacity:1; transform:scale(1); } }
+        @keyframes floaty { 0%,100% { transform:translate(0,0); } 50% { transform:translate(10px,-14px); } }
+        @keyframes waveX { from { transform:translateX(0); } to { transform:translateX(-50%); } }
+        /* top bar */
+        #global-header { animation:dropIn .55s cubic-bezier(.2,.8,.2,1) both; padding-top:12px; padding-bottom:8px; }
+        #global-header .logo-mark { position:relative; width:36px; height:36px; border-radius:11px; box-shadow:0 4px 12px rgba(0,0,0,.18); }
+        #global-header .logo-mark i { animation:lub 3.6s ease-in-out 1s infinite; }
+        #global-header .logo-mark::after { content:""; position:absolute; inset:0; border-radius:inherit; border:1.5px solid rgba(255,255,255,.7); animation:logoRing 3.6s ease-out 1s infinite; }
+        .wordmark { font-size:19px; color:#fff; letter-spacing:-.02em; font-weight:500; }
+        .wordmark span { font-weight:800; }
+        #global-header button[aria-label="Notifications"] { width:38px; height:38px; border-radius:12px; transition:background .2s, transform .2s; }
+        #global-header button[aria-label="Notifications"]:active { transform:scale(.92); background:rgba(255,255,255,.22); }
+        #global-header button[aria-label="Notifications"]:has(#notif-badge:not(.hidden)) .fa-bell { animation:bell 5s ease-in-out 2s infinite; transform-origin:50% 10%; }
+        /* hero */
+        .hero { padding:8px 16px 26px; position:relative; }
+        .hero-fx { position:absolute !important; inset:0; overflow:hidden; pointer-events:none; animation:none !important; border-radius:inherit; }
+        .hero-fx i { position:absolute; border-radius:50%; background:rgba(255,255,255,.07); animation:floaty 9s ease-in-out infinite; }
+        .hero-fx .wave { position:absolute; left:0; bottom:-1px; width:200%; height:20px; }
+        .hero-fx .wave path { fill:rgba(255,255,255,.1); }
+        .hero-fx .w1 { animation:waveX 9s linear infinite; }
+        .hero-fx .w2 { height:15px; animation:waveX 14s linear infinite reverse; } .hero-fx .w2 path { fill:rgba(255,255,255,.14); }
+        .avatar { position:relative; flex-shrink:0; width:46px; height:46px; border-radius:50%; display:grid; place-items:center; background:rgba(255,255,255,.16); color:#fff; font-weight:800; font-size:18px; }
+        .avatar::before { content:""; position:absolute; inset:-4px; border-radius:50%; background:conic-gradient(from 0deg,rgba(255,255,255,.95),rgba(255,255,255,0) 45%,rgba(255,255,255,.95)); -webkit-mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px)); mask:radial-gradient(farthest-side,transparent calc(100% - 2px),#000 calc(100% - 2px)); animation:spin 6s linear infinite; }
+        .hero h2 { font-size:21px; margin-top:0; }
+        #hero-greet { animation:rise .6s .15s both; } .hero h2 { animation:rise .6s .25s both; }
+        .bgroup { animation:popIn .6s .35s cubic-bezier(.2,.9,.3,1.3) both; backdrop-filter:blur(6px); }
+        .hero > div:nth-child(2) { margin-top:16px !important; }
+    </style>
+<style id="pulse">
+        @keyframes ecgMove { from { background-position-x:0; } to { background-position-x:-120px; } }
+        @keyframes ecgGlow { 0%,100% { opacity:.55; } 50% { opacity:.95; } }
+        .ecg-line { flex:1; min-width:40px; height:30px; margin:0 12px; background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='30' viewBox='0 0 120 30'%3E%3Cpath d='M0 15H20q3-5 6 0H34l2 3 3-16 3 20 2-7H54q5-8 10 0H120' fill='none' stroke='white' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") repeat-x left center / 120px 30px;
+            animation:ecgMove 2.4s linear infinite, ecgGlow 1.2s ease-in-out infinite;
+            filter:drop-shadow(0 0 3px rgba(255,255,255,.65));
+            -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 78%,transparent 100%); mask-image:linear-gradient(90deg,transparent 0,#000 22%,#000 78%,transparent 100%); }
+    </style>
+<style id="feedpage">
+        .feed-top { position:sticky; top:0; z-index:5; background:#F2F7F9; padding-top:14px; }
+        .feed-head { display:flex; align-items:center; justify-content:space-between; padding:0 16px 10px; }
+        .feed-head h2 { font-size:21px; font-weight:800; letter-spacing:-.02em; color:#0F2A35; line-height:1.15; }
+        .feed-head p { font-size:12px; color:#6B7280; margin-top:2px; }
+        .live-pill { display:inline-flex; align-items:center; gap:7px; font-size:11px; font-weight:700; color:#15803D; background:#E3F5EA; padding:6px 11px; border-radius:20px; }
+        .chips { display:flex; gap:8px; overflow-x:auto; padding:0 16px 12px; }
+        .chip { flex-shrink:0; padding:7px 14px; border-radius:20px; border:1px solid #DDE7EC; background:#fff; font-size:12px; font-weight:600; color:#4B5563; transition:background .2s, color .2s, border-color .2s, transform .15s; }
+        .chip:active { transform:scale(.94); }
+        .chip.on { background:#0E7490; border-color:#0E7490; color:#fff; }
+        .feed-list { padding:2px 16px 8px; }
+        .req-card { display:flex; align-items:center; flex-wrap:wrap; gap:10px; background:#fff; border:1px solid #E3EAEE; border-radius:12px; padding:9px 10px 9px 12px; margin-bottom:7px; cursor:pointer; position:relative; overflow:hidden; transition:transform .15s, background .2s; }
+        .req-card:active { transform:scale(.985); background:#FAFCFD; }
+        .req-card.urgent::before { content:""; position:absolute; left:0; top:0; bottom:0; width:3px; background:#D64545; }
+        .req-card.done { opacity:.7; }
+        .rc-blood { width:38px; height:38px; border-radius:9px; background:#FDECEC; color:#C62828; font-weight:800; font-size:14px; display:grid; place-items:center; flex-shrink:0; letter-spacing:-.02em; }
+        .rc-main { flex:1; min-width:0; }
+        .rc-top { display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
+        .rc-top b { font-size:13.5px; font-weight:700; color:#0F2A35; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.25; }
+        .rc-time { font-size:10px; color:#94A0AB; flex-shrink:0; }
+        .rc-loc { font-size:11px; color:#6B7280; margin-top:2px; display:flex; gap:5px; align-items:center; min-width:0; }
+        .rc-loc i { color:#0E7490; font-size:10px; flex-shrink:0; }
+        .rc-loc span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .rc-tags { display:flex; align-items:center; gap:5px; margin-top:5px; min-width:0; }
+        .rc-prob { display:inline-flex; align-items:center; gap:4px; font-size:10px; font-weight:600; color:#0B5D74; background:#EAF4F7; padding:2px 7px; border-radius:6px; min-width:0; max-width:60%; }
+        .rc-prob i { font-size:9px; flex-shrink:0; }
+        .rc-prob span { white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .pill { display:inline-flex; align-items:center; gap:5px; font-size:9.5px; font-weight:700; padding:2px 7px; border-radius:6px; flex-shrink:0; }
+        .pill-e { background:#FDECEC; color:#C62828; } .pill-e .dot { width:5px; height:5px; border-radius:50%; background:#D64545; }
+        .pill-s { background:#EEF1F4; color:#5B6672; } .pill-ok { background:#E3F5EA; color:#15803D; }
+        .rc-call { width:34px; height:34px; border-radius:10px; display:grid; place-items:center; background:#16A34A; color:#fff; flex-shrink:0; align-self:center; font-size:12px; }
+        .rc-call-e { background:#D64545; }
+        .rc-actions { flex-basis:100%; display:flex; gap:8px; border-top:1px solid #EDF2F5; padding-top:8px; }
+        .rc-btn { flex:1; padding:6px; border-radius:8px; font-size:11.5px; font-weight:700; }
+        .rc-edit { background:#E3F2F6; color:#0B5D74; } .rc-del { background:#FDECEC; color:#C62828; }
+        .feed-empty { text-align:center; padding:40px 20px; color:#6B7280; font-size:13px; }
+        .feed-empty i { display:block; font-size:30px; color:#9ACFDB; margin-bottom:10px; }
+    </style>
+<style id="profilepage">
+        .pf-hero { background:linear-gradient(180deg,#0B6B83,#0A5568); padding:14px 20px 52px; border-radius:0 0 10px 10px; }
+        .pf-id { display:flex; align-items:center; gap:14px; }
+        .pf-avatar { width:64px; height:64px; border-radius:14px; background:#fff; display:grid; place-items:center; flex-shrink:0; box-shadow:0 0 0 3px rgba(255,255,255,.22); }
+        .pf-avatar span { font-size:20px; font-weight:800; letter-spacing:-.03em; }
+        .pf-meta { min-width:0; color:#fff; }
+        .pf-meta h2 { font-size:19px; font-weight:700; line-height:1.2; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:capitalize; }
+        .pf-loc { display:flex; align-items:center; gap:6px; font-size:12.5px; opacity:.85; margin-top:3px; }
+        .pf-loc i { font-size:11px; }
+        .pf-role { display:inline-block; margin-top:7px; font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:#fff; background:rgba(255,255,255,.16); border:1px solid rgba(255,255,255,.3); padding:3px 9px; border-radius:4px; }
+        .pf-stats { display:flex; margin:-30px 16px 0; background:#fff; border:1px solid #E3EAEE; border-radius:10px; box-shadow:0 6px 18px -8px rgba(15,42,53,.18); position:relative; z-index:2; }
+        .pf-stat { flex:1; display:flex; flex-direction:column; align-items:center; padding:13px 0; }
+        .pf-stat + .pf-stat { border-left:1px solid #EDF2F5; }
+        .pf-num { font-size:19px !important; font-weight:800 !important; line-height:1.2; color:#0F2A35; }
+        #status-text.text-green-600 { color:#15803D; } #status-text.text-gray-400 { color:#9AA5AF; }
+        .pf-lbl { font-size:11px; color:#6B7280; font-weight:500; margin-top:2px; }
+        .pf-body { padding:6px 16px 8px; }
+        .pf-sec { font-size:10.5px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:#8A94A0; margin:18px 4px 8px; }
+        .pf-card { background:#fff; border:1px solid #E3EAEE; border-radius:10px; overflow:hidden; }
+        .pf-row { display:flex; align-items:center; gap:12px; padding:12px 14px; width:100%; text-align:left; }
+        .pf-btn { background:transparent; transition:background .15s; } .pf-btn:active { background:#F5F8FA; }
+        .pf-divider { border-top:1px solid #EDF2F5; }
+        .pf-ic { width:34px; height:34px; border-radius:8px; background:#E6F4F7; color:#0E7490; display:grid; place-items:center; font-size:13px; flex-shrink:0; }
+        .pf-ic-out { background:#FDECEC; color:#C62828; }
+        .pf-txt { flex:1; min-width:0; }
+        .pf-t { font-size:13.5px; font-weight:600; color:#0F2A35; line-height:1.3; }
+        .pf-s { font-size:11.5px; color:#7A8591; margin-top:1px; }
+        .pf-out .pf-t { color:#C62828; }
+        .pf-chev { font-size:11px; color:#B3BCC4; }
+        #badge-icon { width:40px !important; height:40px !important; border-radius:8px !important; font-size:16px !important; flex-shrink:0; }
+        .pf-switch { position:relative; width:42px; height:24px; flex-shrink:0; cursor:pointer; }
+        .pf-switch input { position:absolute; opacity:0; inset:0; width:100%; height:100%; margin:0; cursor:pointer; z-index:1; }
+        .pf-track { position:absolute; inset:0; background:#CBD5DC; border-radius:20px; transition:background .2s; }
+        .pf-track::after { content:""; position:absolute; top:3px; left:3px; width:18px; height:18px; border-radius:50%; background:#fff; box-shadow:0 1px 3px rgba(0,0,0,.2); transition:transform .2s; }
+        .pf-switch input:checked + .pf-track { background:#0E7490; }
+        .pf-switch input:checked + .pf-track::after { transform:translateX(18px); }
+        .pf-stats .pf-stat { padding:12px 0; }
+        .pf-bar { height:5px; background:#E6EDF1; border-radius:3px; overflow:hidden; margin-top:8px; }
+        .pf-bar > div { height:100%; width:0; background:#0E7490; border-radius:3px; transition:width .6s ease; }
+        .pf-badge-sm { font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; background:#E3F5EA; color:#15803D; flex-shrink:0; }
+        .pf-count { font-size:10.5px; font-weight:700; padding:2px 7px; border-radius:4px; background:#EAF4F7; color:#0B5D74; flex-shrink:0; }
+        .pf-sheet { border-radius:14px 14px 0 0; }
+        .pf-field { display:block; font-size:11px; font-weight:700; color:#6B7280; margin:12px 0 5px; letter-spacing:.02em; }
+        .pf-input { width:100%; padding:10px 12px; background:#F7FAFB; border:1px solid #DDE7EC; border-radius:8px; font-size:14px; color:#0F2A35; }
+        .pf-input:focus { outline:none; border-color:#0E7490; box-shadow:0 0 0 3px rgba(14,116,144,.12); }
+        .pf-save { width:100%; margin-top:18px; padding:12px; border-radius:8px; background:#0E7490; color:#fff; font-weight:700; font-size:14px; }
+        .pf-save:active { transform:scale(.98); }
+        .pf-save[disabled] { opacity:.6; }
+    </style>
+<style id="searchpage">
+        .sp-hero { background:linear-gradient(180deg,#0B6B83,#0A5568); padding:6px 16px 14px; border-radius:0 0 10px 10px; }
+        .sp-title { margin-bottom:12px; }
+        .sp-title h2 { font-size:18px; font-weight:700; color:#fff; letter-spacing:-.01em; line-height:1.25; }
+        .sp-title p { font-size:12px; color:rgba(255,255,255,.72); margin-top:2px; }
+        .sp-field { position:relative; background:#fff; border-radius:8px; display:flex; align-items:center; }
+        .sp-field > i:first-child { position:absolute; left:12px; font-size:13px; color:#0E7490; pointer-events:none; }
+        .sp-field input, .sp-field select { width:100%; background:transparent; border:0; outline:0; padding:11px 30px 11px 34px; font-size:13.5px; color:#0F2A35; font-weight:500; appearance:none; -webkit-appearance:none; border-radius:8px; }
+        .sp-field input::placeholder { color:#94A0AB; font-weight:400; }
+        .sp-field:focus-within { box-shadow:0 0 0 3px rgba(255,255,255,.25); }
+        .sp-caret { position:absolute; right:11px; font-size:10px; color:#8A94A0; pointer-events:none; }
+        .sp-row { display:flex; gap:8px; margin-top:8px; }
+        .sp-sel { flex:1; min-width:0; }
+        .sp-sel select { font-size:13px; }
+        .sp-btn { width:100%; margin-top:10px; padding:11px; border-radius:8px; background:#fff; color:#0A5568; font-size:13.5px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:8px; transition:transform .15s; }
+        .sp-btn:active { transform:scale(.98); }
+        .sp-btn i { font-size:12px; }
+        .sp-stats { display:flex; align-items:center; justify-content:space-between; padding:12px 18px 8px; }
+        .sp-stats.hidden { display:none; }
+        .sp-stats p { font-size:13px; color:#4B5563; } .sp-stats p b { color:#0F2A35; font-weight:700; }
+        .sp-avail { display:inline-flex; align-items:center; gap:6px; font-size:11px; font-weight:600; color:#15803D; background:#E3F5EA; padding:3px 9px; border-radius:6px; }
+        .sp-avail i { width:6px; height:6px; border-radius:50%; background:#16A34A; }
+        .dc { display:flex; align-items:center; gap:12px; background:#fff; border:1px solid #E3EAEE; border-radius:10px; padding:10px 12px; margin-bottom:7px; cursor:pointer; transition:transform .15s, background .2s; }
+        .dc:active { transform:scale(.985); background:#FAFCFD; }
+        .dc.off { opacity:.72; }
+        .dc-blood { width:40px; height:40px; border-radius:8px; background:#FDECEC; color:#C62828; font-weight:800; font-size:14px; display:grid; place-items:center; flex-shrink:0; letter-spacing:-.02em; }
+        .dc-main { flex:1; min-width:0; }
+        .dc-main b { display:block; font-size:14px; font-weight:700; color:#0F2A35; line-height:1.25; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-transform:capitalize; }
+        .dc-main p { display:flex; align-items:center; gap:5px; font-size:11.5px; color:#6B7280; margin-top:2px; }
+        .dc-main p i { font-size:10px; color:#0E7490; }
+        .dc-st { display:inline-flex; align-items:center; gap:5px; margin-top:5px; font-size:10px; font-weight:700; padding:2px 7px; border-radius:4px; background:#EEF1F4; color:#5B6672; }
+        .dc-st i { width:5px; height:5px; border-radius:50%; background:#9AA5AF; }
+        .dc-st.on { background:#E3F5EA; color:#15803D; } .dc-st.on i { background:#16A34A; }
+        .dc-call { width:36px; height:36px; border-radius:8px; background:#16A34A; color:#fff; display:grid; place-items:center; font-size:13px; flex-shrink:0; }
+        .dc-call:active { background:#15803D; }
+    </style>
+</head>
+<body class="bg-slate-100 h-screen overflow-hidden flex justify-center">
+    <div id="offline-banner"><i class="fa-solid fa-wifi mr-1"></i> You are offline. Some features may not work.</div>
+
+    <div class="w-full max-w-md md:max-w-full h-full bg-white md:bg-transparent relative overflow-hidden flex flex-col md:h-screen">
+
+        <!-- 1. SPLASH SCREEN -->
+        <div id="splash" class="splash-screen">
+            <div class="splash-logo"><i class="fa-solid fa-droplet"></i></div>
+            <h1 class="splash-word">BenapoleBlood</h1>
+            <p class="splash-tag">Find donors. Save lives.</p>
+        </div>
+
+        <!-- 2. AUTHENTICATION PAGE -->
+        <div id="auth-page" class="hidden h-full w-full flex items-center justify-center bg-slate-100 p-4 absolute inset-0 z-40">
+            <div class="bg-white w-full max-w-md p-8 rounded-3xl shadow-2xl">
+                <div class="mb-7">
+                    <div class="logo-mark mb-4" style="width:46px;height:46px;font-size:20px"><i class="fa-solid fa-droplet"></i></div>
+                    <h2 class="text-2xl font-extrabold text-slate-900">Welcome to BenapoleBlood</h2>
+                    <p class="text-slate-500 text-sm mt-1">Sign in to find donors and manage your blood requests.</p>
+                </div>
+
+                <div class="flex bg-slate-100 p-1 rounded-xl mb-6">
+                    <button onclick="showAuthForm('login')" id="tab-login" class="flex-1 py-3 rounded-lg text-sm font-bold bg-white shadow text-rose-600 transition">Login</button>
+                    <button onclick="showAuthForm('register')" id="tab-register" class="flex-1 py-3 rounded-lg text-sm font-bold text-slate-500 transition">Register</button>
+                </div>
+
+                <!-- Login Form -->
+                <form id="login-form" class="space-y-4">
+                    <input type="email" id="login-email" placeholder="Email Address" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500 transition">
+                    <input type="password" id="login-pass" placeholder="Password" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-rose-500 transition">
+                    <button type="button" onclick="handleLogin()" id="btn-login" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-rose-200 hover:bg-rose-700 flex justify-center items-center transition active:scale-95">
+                        <span>Login</span>
+                        <div class="loader ml-2" id="login-loader"></div>
+                    </button>
+                </form>
+
+                <!-- Register Form -->
+                <form id="register-form" class="space-y-3 hidden">
+                    <input type="text" id="reg-name" placeholder="Full Name" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                    <input type="email" id="reg-email" placeholder="Email Address" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                    <input type="tel" id="reg-phone" placeholder="Phone Number" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                    <input type="password" id="reg-pass" placeholder="Create Password" class="w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm">
+                    
+                    <div class="flex gap-2">
+                        <select id="reg-blood" class="w-1/2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="">Blood Group</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                        <select id="reg-role" class="w-1/2 p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                            <option value="donor">Donor</option>
+                            <option value="receiver">Receiver</option>
+                        </select>
+                    </div>
+
+                    <select id="reg-district" class="district-select w-full p-3 bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-rose-500">
+                        <option value="" disabled selected>Select Your District</option>
+                    </select>
+                    
+                    <button type="button" onclick="handleRegister()" id="btn-reg" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold shadow-lg hover:bg-rose-700 flex justify-center items-center transition active:scale-95">
+                        <span>Register</span>
+                        <div class="loader ml-2" id="reg-loader"></div>
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- 4. MAIN USER APP LAYOUT -->
+        <div id="main-app" class="hidden flex-col h-full w-full max-w-md mx-auto md:my-4 md:h-[95vh] md:bg-white md:rounded-3xl md:shadow-2xl relative md:overflow-hidden">
+            
+            <!-- Global Header -->
+            <div id="global-header" class="bg-white px-5 py-3 flex justify-between items-center z-10 shrink-0 border-b border-slate-100">
+                <div class="flex items-center gap-2.5">
+                    <div class="logo-mark"><i class="fa-solid fa-droplet"></i></div>
+                    <h1 class="wordmark">Life<span>Blood</span></h1>
+                </div>
+                <div class="ecg-line" aria-hidden="true"></div>
+                <button class="relative w-10 h-10 rounded-xl border border-slate-200 grid place-items-center" onclick="navTo('page-notifications')" aria-label="Notifications">
+                    <i class="fa-solid fa-bell text-slate-600"></i>
+                    <div id="notif-badge" class="hidden absolute top-2 right-2 w-2.5 h-2.5 bg-rose-600 rounded-full border-2 border-white"></div>
+                </button>
+            </div>
+
+            <!-- Content Area -->
+            <div id="content-area" class="flex-1 overflow-hidden relative bg-slate-50">
+                
+                <!-- HOME PAGE -->
+                <div id="page-home" class="h-full overflow-y-auto fade-in pb-24 relative" style="background:var(--paper)">
+                    <section class="hero">
+                        <div class="flex items-center justify-between gap-3 relative z-10">
+                            <div class="flex items-center gap-3 min-w-0">
+                                <div class="avatar"><span id="hero-avatar">A</span></div>
+                                <div class="min-w-0">
+                                    <p id="hero-greet" class="text-xs opacity-80 font-medium">Welcome back</p>
+                                    <h2 class="text-2xl font-extrabold leading-tight"><span id="user-name-display">User</span></h2>
+                                </div>
+                            </div>
+                            <div class="bgroup"><span id="hero-blood">--</span><small>Blood group</small></div>
+                        </div>
+                        <div class="flex gap-3 mt-6 relative z-10">
+                            <button onclick="navTo('page-request')" class="btn-solid"><i class="fa-solid fa-plus"></i> Request blood</button>
+                            <button onclick="navTo('page-search')" class="btn-ghost"><i class="fa-solid fa-magnifying-glass"></i> Find donors</button>
+                        </div>
+                        <div class="hero-fx" aria-hidden="true">
+                            <i style="width:120px;height:120px;right:-30px;top:-20px;animation-delay:0s"></i>
+                            <i style="width:70px;height:70px;left:38%;top:40px;animation-delay:-3s"></i>
+                            <i style="width:46px;height:46px;left:-10px;bottom:40px;animation-delay:-6s"></i>
+                            <svg class="wave w1" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 20Q150 0 300 20T600 20T900 20T1200 20V40H0Z"/></svg>
+                            <svg class="wave w2" viewBox="0 0 1200 40" preserveAspectRatio="none"><path d="M0 22Q150 38 300 22T600 22T900 22T1200 22V40H0Z"/></svg>
+                        </div>
+                    </section>
+                    <div class="px-5 pt-5">
+                        <div class="stats">
+                            <div class="stat"><b id="stat-active">0</b><span>Active</span></div>
+                            <div class="stat"><b id="stat-donors">-</b><span>Donors</span></div>
+                            <div class="stat"><b id="stat-helped">-</b><span>Fulfilled</span></div>
+                        </div>
+                        <div class="flex items-center justify-between sec-title" style="margin-bottom:8px">
+                            <span class="flex items-center gap-2"><span class="live-dot"></span>Live requests</span>
+                            <button onclick="navTo('page-feed')" class="text-[11px] font-bold" style="color:var(--crimson)">See all</button>
+                        </div>
+                        <div id="live-strip" class="live-strip"><div class="skel" style="flex:0 0 78%;height:92px"></div><div class="skel" style="flex:0 0 78%;height:92px"></div></div>
+                        <div id="elig-card" class="bg-white rounded-2xl p-4 border border-slate-200 flex items-center gap-4">
+                            <div id="elig-icon" class="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-lg shrink-0"><i class="fa-solid fa-heart-circle-check"></i></div>
+                            <div class="flex-1 min-w-0">
+                                <p class="text-[11px] text-slate-400 font-medium">Donation eligibility</p>
+                                <p id="elig-title" class="font-bold text-slate-900 text-sm">Checking...</p>
+                                <div class="h-1.5 bg-slate-100 rounded-full mt-2 overflow-hidden"><div id="elig-bar" class="h-full bg-emerald-500 rounded-full" style="width:0%"></div></div>
+                                <p id="elig-sub" class="text-[11px] text-slate-400 mt-1"></p>
+                            </div>
+                        </div>
+                        <h3 class="sec-title">Services</h3>
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="navTo('page-feed')" class="tile"><span class="ic"><i class="fa-solid fa-rss"></i></span><span><b>Blood feed</b><small>Live requests</small></span></button>
+                            <button onclick="navToMyRequests()" class="tile"><span class="ic"><i class="fa-solid fa-list-check"></i></span><span><b>My requests</b><small>Status and edits</small></span></button>
+                            <button onclick="openModal('benefits-modal')" class="tile"><span class="ic"><i class="fa-solid fa-heart-circle-check"></i></span><span><b>Benefits</b><small>Why donate</small></span></button>
+                            <button onclick="openTeamModal()" class="tile"><span class="ic"><i class="fa-solid fa-users"></i></span><span><b>Volunteers</b><small>Our team</small></span></button>
+                        </div>
+                        <h3 class="sec-title">Tools</h3>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="openModal('compat-modal')" class="tool"><i class="fa-solid fa-droplet"></i><span>Compatibility</span></button>
+                            <button onclick="openModal('check-modal')" class="tool"><i class="fa-solid fa-clipboard-check"></i><span>Can I donate?</span></button>
+                            <a href="tel:999" class="tool"><i class="fa-solid fa-phone-volume"></i><span>Emergency 999</span></a>
+                            <button onclick="shareApp()" class="tool"><i class="fa-solid fa-share-nodes"></i><span>Invite</span></button>
+                        </div>
+                        <div class="note mt-6"><i class="fa-solid fa-shield-halved mt-0.5" style="color:var(--crimson)"></i><p>Meet donors at a hospital or blood bank. Blood is never sold on BenapoleBlood.</p></div>
+                    </div>
+                </div>
+
+                <!-- NOTIFICATIONS PAGE -->
+                <div id="page-notifications" class="hidden h-full flex flex-col fade-in pb-20">
+                     <div class="bg-white p-4 shadow-sm mb-2">
+                        <h2 class="font-bold text-xl text-gray-800">Notifications</h2>
+                        <p class="text-xs text-gray-500">Requests matching your blood group</p>
+                    </div>
+                    <div id="notification-list" class="p-4 space-y-3 overflow-y-auto flex-1">
+                        <p class="text-center text-gray-400 mt-10">No new notifications.</p>
+                    </div>
+                </div>
+
+                <!-- SEARCH PAGE -->
+                <div id="page-search" class="hidden h-full flex flex-col fade-in pb-20" style="background:#F2F7F9">
+                    <div class="sp-hero shrink-0 relative z-10">
+                        <div class="sp-title"><h2>Find blood donors</h2><p>Search by name, blood group or district</p></div>
+                        <div class="sp-field">
+                            <i class="fa-solid fa-magnifying-glass"></i>
+                            <input type="text" id="search-text" placeholder="Name, phone or area" oninput="debouncedSearch()" onkeydown="if(event.key==='Enter')searchDonors()">
+                        </div>
+                        <div class="sp-row">
+                            <div class="sp-field sp-sel">
+                                <i class="fa-solid fa-droplet"></i>
+                                <select id="search-blood" onchange="searchDonors()">
+                                    <option value="All">All blood groups</option>
+                                    <option value="A+">A+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="O+">O+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down sp-caret"></i>
+                            </div>
+                            <div class="sp-field sp-sel">
+                                <i class="fa-solid fa-location-dot"></i>
+                                <select id="search-district" class="district-select" onchange="searchDonors()">
+                                    <option value="">All districts</option>
+                                </select>
+                                <i class="fa-solid fa-chevron-down sp-caret"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="search-stats" class="sp-stats hidden">
+                        <p><b id="total-found">0</b> donors found</p>
+                        <span class="sp-avail"><i></i><b id="total-available">0</b> available now</span>
+                    </div>
+                    <div id="donors-list" class="flex-1 overflow-y-auto px-4 pt-1 pb-20">
+                        <div class="text-center mt-10 opacity-50"><i class="fa-solid fa-users-viewfinder text-6xl text-gray-300 mb-4"></i><p class="text-gray-400">Searching for donors...</p></div>
+                    </div>
+                </div>
+
+                <!-- CREATE REQUEST PAGE -->
+                <div id="page-request" class="hidden h-full flex flex-col p-4 fade-in bg-slate-50">
+                    <h2 class="font-bold text-xl mb-4 text-rose-600">Blood Requests</h2>
+                    <div class="flex bg-gray-200 p-1 rounded-xl mb-4 shrink-0">
+                        <button onclick="switchReqTab('new')" id="tab-req-new" class="flex-1 py-2 rounded-lg text-sm font-bold bg-white text-rose-600 shadow transition">New Request</button>
+                        <button onclick="switchReqTab('all')" id="tab-req-all" class="flex-1 py-2 rounded-lg text-sm font-bold text-gray-500 transition">My Requests</button>
+                    </div>
+                    <div id="view-req-new" class="flex-1 overflow-y-auto pb-20">
+                        <div class="bg-white p-5 rounded-2xl shadow-sm space-y-4 relative">
+                            <div id="edit-mode-banner" class="hidden bg-yellow-50 text-yellow-700 p-2 rounded text-xs font-bold mb-2 flex justify-between items-center">
+                                <span><i class="fa-solid fa-pen-to-square mr-1"></i> Editing Post</span>
+                                <button onclick="cancelEdit()" class="text-red-500 hover:underline">Cancel</button>
+                            </div>
+                            <div class="bg-red-50 border border-red-100 p-3 rounded-xl flex justify-between items-center">
+                                <div>
+                                    <div class="flex items-center gap-2"><i class="fa-solid fa-bell text-red-600 animate-pulse"></i><span class="font-bold text-red-700 text-sm">Emergency Request?</span></div>
+                                    <p class="text-[10px] text-red-500 mt-1 leading-tight">Priority notification for donors.</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input type="checkbox" id="req-emergency" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-red-600"></div>
+                                </label>
+                            </div>
+                            <h3 class="font-semibold text-gray-700 mb-2 text-sm">Patient Details</h3>
+                            <input type="text" id="req-patient" placeholder="Patient Name" class="w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm">
+                            <input type="text" id="req-problem" placeholder="Patient's Problem / Disease" class="w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm">
+                            <input type="text" id="req-hospital" placeholder="Hospital Name" class="w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm">
+                            <div class="flex gap-3">
+                                <select id="req-blood" class="w-1/2 p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm text-gray-600">
+                                    <option value="A+">A+</option>
+                                    <option value="B+">B+</option>
+                                    <option value="O+">O+</option>
+                                    <option value="AB+">AB+</option>
+                                    <option value="A-">A-</option>
+                                    <option value="B-">B-</option>
+                                    <option value="O-">O-</option>
+                                    <option value="AB-">AB-</option>
+                                </select>
+                                <input type="date" id="req-date" class="w-1/2 p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm text-gray-600">
+                            </div>
+                            <select id="req-location" class="district-select w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm text-gray-600">
+                                <option value="" disabled selected>Select District</option>
+                            </select>
+                            <input type="tel" id="req-phone" placeholder="Contact Number" class="w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm">
+                            <textarea id="req-note" rows="2" placeholder="Additional Information (Optional)" class="w-full p-3 bg-slate-50 rounded-lg border focus:outline-none focus:ring-1 focus:ring-rose-500 text-sm resize-none"></textarea>
+                            <button onclick="submitRequest()" id="btn-post-req" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold shadow-lg mt-2 flex justify-center items-center hover:bg-rose-700 transition">
+                                <span id="btn-post-text">Post Request</span>
+                                <div class="loader ml-2" id="post-loader"></div>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="view-req-all" class="hidden flex-1 overflow-y-auto pb-20">
+                        <div id="all-requests-list-view" class="space-y-3">
+                            <p class="text-center text-gray-400 mt-10">Loading your requests...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FEED PAGE -->
+                <div id="page-feed" class="hidden h-full overflow-y-auto fade-in pb-20" style="background:#F2F7F9">
+                    <div class="feed-top">
+                        <div class="feed-head">
+                            <div><h2>Blood feed</h2><p id="feed-count">Loading requests...</p></div>
+                            <span class="live-pill"><span class="live-dot"></span>Live</span>
+                        </div>
+                        <div id="feed-filters" class="chips"></div>
+                    </div>
+                    <div id="feed-list" class="feed-list">
+                        <div class="skel" style="height:96px;margin-bottom:10px"></div><div class="skel" style="height:96px;margin-bottom:10px"></div><div class="skel" style="height:96px"></div>
+                    </div>
+                </div>
+
+                <!-- PROFILE PAGE -->
+                <div id="page-profile" class="hidden h-full overflow-y-auto fade-in pb-20" style="background:#F2F7F9">
+                    <div class="pf-hero">
+                        <div class="pf-id">
+                            <div class="pf-avatar"><span id="profile-bg">--</span></div>
+                            <div class="pf-meta">
+                                <h2 id="profile-name">Loading...</h2>
+                                <p class="pf-loc"><i class="fa-solid fa-location-dot"></i><span id="profile-district">...</span></p>
+                                <span class="pf-role" id="profile-role">...</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pf-stats">
+                        <div class="pf-stat">
+                            <span class="pf-num" id="profile-donations-count">0</span>
+                            <span class="pf-lbl">Donations</span>
+                        </div>
+                        <div class="pf-stat">
+                            <span class="pf-num" id="pf-lives">0</span>
+                            <span class="pf-lbl">Lives impacted</span>
+                        </div>
+                        <div class="pf-stat">
+                            <span class="pf-num" id="status-text">Active</span>
+                            <span class="pf-lbl">Status</span>
+                        </div>
+                    </div>
+                    <div class="pf-body">
+                        <p class="pf-sec">Donation status</p>
+                        <div class="pf-card" style="padding:12px 14px">
+                            <div class="flex items-center gap-3">
+                                <div class="pf-ic"><i class="fa-solid fa-calendar-check" id="pf-elig-ic"></i></div>
+                                <div class="pf-txt"><p class="pf-t" id="pf-elig-title">Checking...</p><p class="pf-s" id="pf-elig-sub">&nbsp;</p></div>
+                            </div>
+                            <div class="pf-bar"><div id="pf-elig-bar"></div></div>
+                        </div>
+                        <p class="pf-sec">Achievement</p>
+                        <div class="pf-card pf-row">
+                            <div id="badge-icon" class="w-12 h-12 rounded-full bg-slate-100 text-slate-400 flex items-center justify-center text-xl"><i class="fa-solid fa-award"></i></div>
+                            <div class="pf-txt"><p id="badge-title" class="pf-t">New donor</p><p id="badge-sub" class="pf-s">Complete your first donation to earn a badge</p></div>
+                        </div>
+                        <p class="pf-sec">Activity</p>
+                        <div class="pf-card">
+                            <div class="pf-row">
+                                <div class="pf-ic"><i class="fa-solid fa-hand-holding-droplet"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Available to donate</p><p class="pf-s">Show me in donor search results</p></div>
+                                <label class="pf-switch">
+                                    <input type="checkbox" id="toggle-availability" onchange="toggleAvailability()">
+                                    <span class="pf-track"></span>
+                                </label>
+                            </div>
+                            <button onclick="openMyRequests()" class="pf-row pf-btn pf-divider">
+                                <div class="pf-ic"><i class="fa-solid fa-droplet"></i></div>
+                                <div class="pf-txt"><p class="pf-t">My blood requests</p><p class="pf-s">Edit or close requests you posted</p></div>
+                                <span class="pf-count hidden" id="pf-req-count">0</span>
+                                <i class="fa-solid fa-chevron-right pf-chev"></i>
+                            </button>
+                            <button onclick="toggleHistory()" class="pf-row pf-btn pf-divider">
+                                <div class="pf-ic"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Donation history</p></div>
+                                <i class="fa-solid fa-chevron-right pf-chev" id="history-arrow"></i>
+                            </button>
+                            <div id="history-section" class="hidden border-t border-gray-100 bg-gray-50 p-3 space-y-2">
+                                <p class="text-center text-xs text-gray-400 py-2">No recent history found.</p>
+                            </div>
+                        </div>
+                        <p class="pf-sec">Account</p>
+                        <div class="pf-card">
+                            <button onclick="openEditProfile()" class="pf-row pf-btn">
+                                <div class="pf-ic"><i class="fa-solid fa-user-pen"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Edit profile</p><p class="pf-s">Name, phone and district</p></div>
+                                <i class="fa-solid fa-chevron-right pf-chev"></i>
+                            </button>
+                            <button onclick="shareDonorCard()" class="pf-row pf-btn pf-divider">
+                                <div class="pf-ic"><i class="fa-solid fa-share-nodes"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Share my donor card</p><p class="pf-s">Let others know your blood group</p></div>
+                                <i class="fa-solid fa-chevron-right pf-chev"></i>
+                            </button>
+                            <button onclick="shareApp()" class="pf-row pf-btn pf-divider">
+                                <div class="pf-ic"><i class="fa-solid fa-user-plus"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Invite friends</p><p class="pf-s">Help grow the donor network</p></div>
+                                <i class="fa-solid fa-chevron-right pf-chev"></i>
+                            </button>
+                            <button onclick="openModal('safety-modal')" class="pf-row pf-btn pf-divider">
+                                <div class="pf-ic"><i class="fa-solid fa-shield-halved"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Safety &amp; privacy</p></div>
+                                <i class="fa-solid fa-chevron-right pf-chev"></i>
+                            </button>
+                            <button onclick="handleLogout()" class="pf-row pf-btn pf-out pf-divider">
+                                <div class="pf-ic pf-ic-out"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+                                <div class="pf-txt"><p class="pf-t">Log out</p></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div> 
+
+            <!-- Bottom Nav -->
+            <div class="bottom-nav bg-white flex justify-around items-end pt-2 px-2 pb-4 z-30 fixed bottom-0 w-full max-w-md shrink-0 md:absolute">
+                <button onclick="navTo('page-home')" class="nav-btn text-rose-600 flex flex-col items-center"><i class="fa-solid fa-house text-lg mb-1"></i><span class="text-[10px]">Home</span></button>
+                <button onclick="navTo('page-search')" class="nav-btn text-gray-400 flex flex-col items-center"><i class="fa-solid fa-magnifying-glass text-lg mb-1"></i><span class="text-[10px]">Donors</span></button>
+                <button onclick="navTo('page-request')" aria-label="New request" class="relative -top-5 bg-rose-600 text-white w-14 h-14 rounded-2xl shadow-lg flex items-center justify-center border-4 border-white active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
+                <button onclick="navTo('page-feed')" class="nav-btn text-gray-400 flex flex-col items-center"><i class="fa-solid fa-rss text-lg mb-1"></i><span class="text-[10px]">Feed</span></button>
+                <button onclick="navTo('page-profile')" class="nav-btn text-gray-400 flex flex-col items-center"><i class="fa-solid fa-user text-lg mb-1"></i><span class="text-[10px]">Profile</span></button>
+            </div>
+        </div>
+
+        <!-- DONOR DETAILS MODAL -->
+        <div id="donor-modal" class="fixed inset-0 z-[60] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeDonorModal()"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2">
+                <div class="p-6 relative">
+                    <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6 md:hidden"></div>
+                    <button onclick="closeDonorModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="text-center mb-6">
+                        <div class="w-24 h-24 rounded-full bg-rose-50 mx-auto mb-3 border-4 border-white shadow-md flex items-center justify-center relative">
+                            <span id="modal-blood" class="text-3xl font-black text-rose-600">--</span>
+                            <div id="modal-status-dot" class="absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full"></div>
+                        </div>
+                        <h2 id="modal-name" class="text-2xl font-bold text-gray-800">Donor Name</h2>
+                        <p id="modal-role" class="text-rose-500 text-xs font-bold uppercase tracking-widest mt-1">Donor</p>
+                    </div>
+                    <div class="bg-gray-50 rounded-2xl p-4 space-y-4 mb-6">
+                        <div class="flex items-center gap-3 border-b border-gray-200 pb-3">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-rose-500 shadow-sm"><i class="fa-solid fa-location-dot"></i></div>
+                            <div><p class="text-xs text-gray-500 uppercase">District / Area</p><p id="modal-location" class="font-semibold text-gray-800">Dhaka</p></div>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center text-rose-500 shadow-sm"><i class="fa-solid fa-calendar-check"></i></div>
+                            <div><p class="text-xs text-gray-500 uppercase">Availability</p><p id="modal-status-text" class="font-semibold text-gray-800">Available</p></div>
+                        </div>
+                    </div>
+                    <a id="modal-call-btn" href="#" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 flex justify-center items-center gap-2 active:scale-95 transition hover:bg-rose-700"><i class="fa-solid fa-phone"></i> Call Now</a>
+                    <button onclick="whatsappFrom('modal-call-btn')" class="w-full mt-3 bg-emerald-50 text-emerald-700 py-3 rounded-2xl font-bold text-sm active:scale-95 transition"><i class="fa-brands fa-whatsapp mr-1"></i> Message on WhatsApp</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- POST DETAILS MODAL -->
+        <div id="request-modal" class="fixed inset-0 z-[60] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeRequestModal()"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2">
+                <div class="p-6 relative">
+                    <div class="w-12 h-1 bg-gray-300 rounded-full mx-auto mb-6 md:hidden"></div>
+                    <button onclick="closeRequestModal()" class="absolute top-5 right-5 text-gray-400 hover:text-gray-600 text-xl bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="mb-4">
+                         <span id="req-modal-badge" class="hidden bg-red-600 text-white text-[10px] font-bold px-2 py-1 rounded animate-pulse shadow-sm mb-2 inline-block"><i class="fa-solid fa-triangle-exclamation mr-1"></i>EMERGENCY</span>
+                        <div class="flex justify-between items-end">
+                            <div><h2 class="text-sm text-gray-500 font-medium">Blood Needed</h2><h1 id="req-modal-blood" class="text-5xl font-black text-rose-600 tracking-tight">AB+</h1></div>
+                            <div class="text-right"><p class="text-xs text-gray-400">Date needed</p><p id="req-modal-date" class="font-bold text-gray-800">12 Oct 2023</p></div>
+                        </div>
+                    </div>
+                    <div class="bg-rose-50 rounded-2xl p-5 space-y-4 mb-6 border border-rose-100">
+                        <div><p class="text-xs text-rose-400 uppercase font-bold">Patient & Problem</p><h3 id="req-modal-patient" class="text-lg font-bold text-gray-800">Patient Name</h3><p id="req-modal-problem" class="text-sm text-gray-600 italic">--</p></div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div><p class="text-xs text-rose-400 uppercase font-bold">Hospital</p><p id="req-modal-hospital" class="text-sm font-semibold text-gray-700">Hospital Name</p></div>
+                            <div><p class="text-xs text-rose-400 uppercase font-bold">Location</p><p id="req-modal-location" class="text-sm font-semibold text-gray-700">Dhaka</p></div>
+                        </div>
+                        <div id="req-modal-note-area" class="border-t border-rose-100 pt-3"><p class="text-xs text-rose-400 uppercase font-bold">Note</p><p id="req-modal-note" class="text-sm text-gray-600">No additional details.</p></div>
+                    </div>
+                    <a id="req-modal-call" href="#" class="w-full bg-rose-600 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 flex justify-center items-center gap-2 active:scale-95 transition hover:bg-rose-700"><i class="fa-solid fa-phone"></i> Contact Now</a>
+                    <div class="grid grid-cols-2 gap-3 mt-3">
+                        <button onclick="whatsappFrom('req-modal-call')" class="bg-emerald-50 text-emerald-700 py-3 rounded-2xl font-bold text-sm active:scale-95 transition"><i class="fa-brands fa-whatsapp mr-1"></i> WhatsApp</button>
+                        <button onclick="shareRequestModal()" class="bg-slate-100 text-slate-700 py-3 rounded-2xl font-bold text-sm active:scale-95 transition"><i class="fa-solid fa-share-nodes mr-1"></i> Share request</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BENEFITS MODAL -->
+        <div id="benefits-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('benefits-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2 max-h-[80vh] overflow-y-auto">
+                <div class="p-6 relative">
+                    <button onclick="closeModal('benefits-modal')" class="absolute top-5 right-5 text-gray-400 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 border-b pb-2">Benefits of Blood Donation</h2>
+                    <div class="space-y-4 text-sm text-gray-600">
+                        <div class="flex gap-3"><div class="text-green-500 text-lg"><i class="fa-solid fa-heart-pulse"></i></div><p><strong>Heart Health:</strong> Regular blood donation helps maintain iron balance, reducing the risk of heart disease.</p></div>
+                        <div class="flex gap-3"><div class="text-red-500 text-lg"><i class="fa-solid fa-seedling"></i></div><p><strong>New Cell Generation:</strong> After donation, the body replenishes blood with fresh new cells, keeping you healthy.</p></div>
+                        <div class="flex gap-3"><div class="text-blue-500 text-lg"><i class="fa-solid fa-weight-scale"></i></div><p><strong>Calorie Burn:</strong> Donating one pint of blood can burn up to 650 calories.</p></div>
+                        <div class="flex gap-3"><div class="text-purple-500 text-lg"><i class="fa-solid fa-face-smile"></i></div><p><strong>Mental Peace:</strong> The joy of saving a human life provides immense mental satisfaction.</p></div>
+                    </div>
+                    <button onclick="closeModal('benefits-modal')" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold shadow-lg mt-6">Close</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEAM MODAL -->
+        <div id="team-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('team-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2">
+                <div class="p-6 relative">
+                    <button onclick="closeModal('team-modal')" class="absolute top-5 right-5 text-gray-400 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800 mb-4 text-center">Our Team</h2>
+                    <div id="team-list" class="space-y-4 max-h-[60vh] overflow-y-auto pb-5"><p class="text-center text-gray-400 mt-4">Loading team members...</p></div>
+                    <p class="text-center text-xs text-gray-400 mt-4 pt-2 border-t border-gray-100">BenapoleBlood App | Version 1.1</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- COMPATIBILITY MODAL -->
+        <div id="compat-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('compat-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2 max-h-[85vh] overflow-y-auto">
+                <div class="p-6 relative">
+                    <button onclick="closeModal('compat-modal')" class="absolute top-5 right-5 text-gray-400 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800 mb-1">Blood compatibility</h2>
+                    <p class="text-xs text-gray-400 mb-3">Red blood cell donation. Tap a group to highlight it.</p>
+                    <table class="compat-table w-full text-sm"><thead><tr><th>Type</th><th>Can give to</th><th>Can receive from</th></tr></thead><tbody id="compat-body"></tbody></table>
+                </div>
+            </div>
+        </div>
+
+        <!-- ELIGIBILITY CHECK MODAL -->
+        <div id="check-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('check-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2 max-h-[85vh] overflow-y-auto">
+                <div class="p-6 relative">
+                    <button onclick="closeModal('check-modal')" class="absolute top-5 right-5 text-gray-400 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800 mb-1">Can I donate?</h2>
+                    <p class="text-xs text-gray-400 mb-4">Tick everything that applies to you today.</p>
+                    <div id="check-list" class="space-y-2 text-sm text-gray-700"></div>
+                    <div id="check-result" class="mt-4 p-3 rounded-xl bg-slate-50 text-sm text-slate-500">Answer the questions above.</div>
+                    <p class="text-[10px] text-gray-400 mt-3">General guidance only. The medical team at the donation centre makes the final decision.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- SAFETY MODAL -->
+        <div id="edit-profile-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('edit-profile-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white pf-sheet shadow-2xl modal-enter md:relative md:w-96 md:rounded-xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2 max-h-[90vh] overflow-y-auto">
+                <div class="p-5 relative">
+                    <button onclick="closeModal('edit-profile-modal')" class="absolute top-4 right-4 text-gray-400 bg-gray-100 w-8 h-8 rounded-lg flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-lg font-bold text-gray-800">Edit profile</h2>
+                    <label class="pf-field">Full name</label>
+                    <input type="text" id="ep-name" class="pf-input">
+                    <label class="pf-field">Phone number</label>
+                    <input type="tel" id="ep-phone" class="pf-input">
+                    <label class="pf-field">District</label>
+                    <select id="ep-district" class="district-select pf-input"><option value="">Select district</option></select>
+                    <button id="ep-save" onclick="saveProfile()" class="pf-save">Save changes</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="safety-modal" class="fixed inset-0 z-[70] hidden">
+            <div class="absolute inset-0 bg-black bg-opacity-50 backdrop-blur-sm" onclick="closeModal('safety-modal')"></div>
+            <div class="absolute bottom-0 w-full bg-white rounded-t-[30px] shadow-2xl modal-enter md:relative md:w-96 md:rounded-2xl md:m-auto md:top-1/2 md:transform md:-translate-y-1/2 max-h-[85vh] overflow-y-auto">
+                <div class="p-6 relative text-sm text-gray-600 space-y-3">
+                    <button onclick="closeModal('safety-modal')" class="absolute top-5 right-5 text-gray-400 bg-gray-100 w-8 h-8 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+                    <h2 class="text-xl font-bold text-gray-800">Safety & privacy</h2>
+                    <p><strong>Your number is shared only with people who search for donors or open a request.</strong> Switch off "Available to Donate" in your profile to stop appearing in donor search.</p>
+                    <p><strong>Meet at a hospital or blood bank.</strong> Never donate or pay at a private location, and never send money to someone you have not verified.</p>
+                    <p><strong>Blood must not be sold.</strong> BenapoleBlood is a free volunteer platform. Report any request that asks for payment to the admin team.</p>
+                    <p><strong>Emergency?</strong> Call 999 first, then post a request here.</p>
+                    <button onclick="closeModal('safety-modal')" class="w-full bg-rose-600 text-white py-3 rounded-xl font-bold shadow-lg mt-2">Got it</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div id="toast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-4 py-2 rounded-lg shadow-lg text-sm opacity-0 transition-opacity z-[100] pointer-events-none"></div>
+
+    <!-- FIREBASE & LOGIC -->
+    <script type="module">
+        
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+// ============================================================
+// BenapoleBlood — Supabase backend (converted from Firebase)
+// User + admin share this same project, database and login.
+// ============================================================
+const SUPABASE_URL = "https://batwzzkxkvnshttxnwdy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_dOepnSqquQRV3AX8DnXkEQ_fjVVnzrh";
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+window.__sb = sb;
+const auth = { currentUser: null };
+const db = { __supabase: true };
+
+// ---------- Firestore-compatible data layer over Supabase ----------
+const __TABLE = { users: 'profiles', requests: 'requests', donations: 'donations', team: 'team' };
+const __TO_COL = { donationCount: 'donation_count', createdAt: 'created_at', updatedAt: 'updated_at', createdBy: 'created_by', isEmergency: 'is_emergency', donorId: 'donor_id', requestId: 'request_id' };
+const __TO_FIELD = Object.fromEntries(Object.entries(__TO_COL).map(([k, v]) => [v, k]));
+const __col = n => __TO_COL[n] || n;
+const __field = c => __TO_FIELD[c] || c;
+const __isTsField = (table, f) => f === 'createdAt' || f === 'updatedAt' || (table === 'donations' && f === 'date');
+function __makeTs(v) { if (v == null) return v; const d = new Date(v); if (isNaN(d)) return v; return { seconds: Math.floor(d.getTime() / 1000), nanoseconds: 0, toDate: () => new Date(d.getTime()) }; }
+function __toRow(table, data) { const row = {}; for (const [k, v] of Object.entries(data || {})) { if (table === 'users' && k === 'uid') continue; row[__col(k)] = v instanceof Date ? v.toISOString() : v; } return row; }
+function __toData(table, row) { if (!row) return undefined; const out = {}; for (const [c, v] of Object.entries(row)) { const f = __field(c); out[f] = __isTsField(table, f) ? __makeTs(v) : v; } if (table === 'users') out.uid = row.id; return out; }
+function collection(_db, name) { return { __ref: 'col', name }; }
+function doc(_db, name, id) { return { __ref: 'doc', name, id }; }
+function where(field, op, value) { return { __w: 1, field, op, value }; }
+function orderBy(field, dir) { return { __o: 1, field, dir }; }
+function limit(n) { return { __l: 1, n }; }
+function query(ref, ...cs) { return { __ref: 'query', name: ref.name, cs }; }
+function increment(n) { return { __increment: n }; }
+async function __runQuery(q) {
+  const table = __TABLE[q.name] || q.name;
+  let qb = sb.from(table).select('*');
+  const cs = q.__ref === 'query' ? (q.cs || []) : [];
+  for (const c of cs) if (c.__w) { if (c.op !== '==') throw new Error('Unsupported filter: ' + c.op); qb = qb.eq(__col(c.field), c.value); }
+  for (const c of cs) if (c.__l) qb = qb.limit(c.n);
+  const { data, error } = await qb; if (error) throw error;
+  const docs = (data || []).map(r => ({ id: r.id, data: () => __toData(q.name, r), exists: () => true }));
+  return { docs, empty: docs.length === 0, size: docs.length, forEach: cb => docs.forEach(cb) };
+}
+function getDocs(q) { return __runQuery(q); }
+async function getDoc(ref) { const table = __TABLE[ref.name] || ref.name; const { data, error } = await sb.from(table).select('*').eq('id', ref.id).maybeSingle(); if (error) throw error; return { id: ref.id, exists: () => !!data, data: () => data ? __toData(ref.name, data) : undefined }; }
+async function setDoc(ref, dataIn) { const table = __TABLE[ref.name] || ref.name; const row = __toRow(ref.name, dataIn); row.id = ref.id; const { error } = await sb.from(table).upsert(row); if (error) throw error; return { id: ref.id }; }
+async function addDoc(colRef, dataIn) { const table = __TABLE[colRef.name] || colRef.name; const row = __toRow(colRef.name, dataIn); const { data, error } = await sb.from(table).insert(row).select('id').single(); if (error) throw error; return { id: data.id }; }
+async function updateDoc(ref, dataIn) {
+  const table = __TABLE[ref.name] || ref.name; const row = {};
+  for (const [k, v] of Object.entries(dataIn || {})) {
+    const c = __col(k);
+    if (v && typeof v === 'object' && '__increment' in v) {
+      const { data: cur } = await sb.from(table).select(c).eq('id', ref.id).maybeSingle();
+      row[c] = ((cur && cur[c]) || 0) + v.__increment;
+    } else row[c] = v instanceof Date ? v.toISOString() : v;
+  }
+  const { error } = await sb.from(table).update(row).eq('id', ref.id); if (error) throw error;
+}
+async function deleteDoc(ref) { const table = __TABLE[ref.name] || ref.name; const { error } = await sb.from(table).delete().eq('id', ref.id); if (error) throw error; }
+function onSnapshot(q, cb, errCb) { let stopped = false; const run = async () => { if (stopped) return; try { cb(await __runQuery(q)); } catch (e) { if (errCb) errCb(e); } }; run(); const iv = setInterval(run, 20000); return () => { stopped = true; clearInterval(iv); }; }
+
+// ---------- Firebase Auth-compatible layer over Supabase Auth ----------
+function __mapUser(u) { return u ? { uid: u.id, email: u.email } : null; }
+async function createUserWithEmailAndPassword(_a, email, password) { const { data, error } = await sb.auth.signUp({ email, password }); if (error) throw error; auth.currentUser = __mapUser(data.user); return { user: __mapUser(data.user) }; }
+async function signInWithEmailAndPassword(_a, email, password) { const { data, error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; auth.currentUser = __mapUser(data.user); return { user: __mapUser(data.user) }; }
+async function signInAnonymously() { throw new Error('Anonymous sign-in is not used in BenapoleBlood Supabase version'); }
+async function signOut(_a) { const { error } = await sb.auth.signOut(); auth.currentUser = null; if (error) throw error; }
+function onAuthStateChanged(_a, cb) {
+  let lastKey = '__unset';
+  const emit = u => { const k = u ? u.uid : null; if (k === lastKey) return; lastKey = k; try { cb(u); } catch (e) { console.error(e); } };
+  sb.auth.getSession().then(({ data }) => { const u = __mapUser(data.session?.user || null); auth.currentUser = u; emit(u); }).catch(() => emit(null));
+  const { data: sub } = sb.auth.onAuthStateChange((_ev, session) => { const u = __mapUser(session?.user || null); auth.currentUser = u; emit(u); });
+  return () => sub.subscription.unsubscribe();
+}
+async function __sbCurrentProfile() { const { data } = await sb.auth.getSession(); if (!data.session) return null; const u = __mapUser(data.session.user); const snap = await getDoc(doc(null, 'users', u.uid)); return { user: u, profile: snap.exists() ? snap.data() : null }; }
+window.__sbCurrentProfile = __sbCurrentProfile;
+
+// --- CONFIGURATION ---
+        // (Supabase client, auth and db are set up in the layer above)
+
+        let currentUserData = null;
+        window.currentSearchResults = [];
+        window.feedData = []; 
+        
+        // Edit Mode State
+        let isEditing = false;
+        let editingId = null;
+
+        // --- 64 DISTRICT DATA ---
+        const districtOptionsHTML = `
+            <optgroup label="Dhaka Division">
+                <option value="Dhaka">Dhaka</option>
+                <option value="Faridpur">Faridpur</option>
+                <option value="Gazipur">Gazipur</option>
+                <option value="Gopalganj">Gopalganj</option>
+                <option value="Kishoreganj">Kishoreganj</option>
+                <option value="Madaripur">Madaripur</option>
+                <option value="Manikganj">Manikganj</option>
+                <option value="Munshiganj">Munshiganj</option>
+                <option value="Narayanganj">Narayanganj</option>
+                <option value="Narsingdi">Narsingdi</option>
+                <option value="Rajbari">Rajbari</option>
+                <option value="Shariatpur">Shariatpur</option>
+                <option value="Tangail">Tangail</option>
+            </optgroup>
+            <optgroup label="Chattogram Division">
+                <option value="Bandarban">Bandarban</option>
+                <option value="Brahmanbaria">Brahmanbaria</option>
+                <option value="Chandpur">Chandpur</option>
+                <option value="Chattogram">Chattogram</option>
+                <option value="Comilla">Comilla</option>
+                <option value="Cox's Bazar">Cox's Bazar</option>
+                <option value="Feni">Feni</option>
+                <option value="Khagrachhari">Khagrachhari</option>
+                <option value="Lakshmipur">Lakshmipur</option>
+                <option value="Noakhali">Noakhali</option>
+                <option value="Rangamati">Rangamati</option>
+            </optgroup>
+            <optgroup label="Rajshahi Division">
+                <option value="Bogura">Bogura</option>
+                <option value="Chapainawabganj">Chapainawabganj</option>
+                <option value="Joypurhat">Joypurhat</option>
+                <option value="Naogaon">Naogaon</option>
+                <option value="Natore">Natore</option>
+                <option value="Pabna">Pabna</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Sirajganj">Sirajganj</option>
+            </optgroup>
+            <optgroup label="Khulna Division">
+                <option value="Bagerhat">Bagerhat</option>
+                <option value="Chuadanga">Chuadanga</option>
+                <option value="Jashore">Jashore</option>
+                <option value="Jhenaidah">Jhenaidah</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Kushtia">Kushtia</option>
+                <option value="Magura">Magura</option>
+                <option value="Meherpur">Meherpur</option>
+                <option value="Narail">Narail</option>
+                <option value="Satkhira">Satkhira</option>
+            </optgroup>
+            <optgroup label="Barishal Division">
+                <option value="Barguna">Barguna</option>
+                <option value="Barishal">Barishal</option>
+                <option value="Bhola">Bhola</option>
+                <option value="Jhalokati">Jhalokati</option>
+                <option value="Patuakhali">Patuakhali</option>
+                <option value="Pirojpur">Pirojpur</option>
+            </optgroup>
+            <optgroup label="Sylhet Division">
+                <option value="Habiganj">Habiganj</option>
+                <option value="Moulvibazar">Moulvibazar</option>
+                <option value="Sunamganj">Sunamganj</option>
+                <option value="Sylhet">Sylhet</option>
+            </optgroup>
+            <optgroup label="Rangpur Division">
+                <option value="Dinajpur">Dinajpur</option>
+                <option value="Gaibandha">Gaibandha</option>
+                <option value="Kurigram">Kurigram</option>
+                <option value="Lalmonirhat">Lalmonirhat</option>
+                <option value="Nilphamari">Nilphamari</option>
+                <option value="Panchagarh">Panchagarh</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Thakurgaon">Thakurgaon</option>
+            </optgroup>
+            <optgroup label="Mymensingh Division">
+                <option value="Jamalpur">Jamalpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+                <option value="Netrokona">Netrokona</option>
+                <option value="Sherpur">Sherpur</option>
+            </optgroup>
+        `;
+
+        function populateDistricts() {
+            const selects = document.querySelectorAll('.district-select');
+            selects.forEach(select => {
+                const defaultOption = select.firstElementChild; 
+                select.innerHTML = '';
+                select.appendChild(defaultOption);
+                select.insertAdjacentHTML('beforeend', districtOptionsHTML);
+            });
+        }
+        populateDistricts();
+
+
+        // --- AUTH LISTENER (Supabase, splash-safe) ---
+        onAuthStateChanged(auth, async (user) => {
+            const splash = document.getElementById('splash');
+            const hideSplash = () => { if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 500); } };
+            try {
+                if (user) {
+                    let docSnap = await getDoc(doc(db, "users", user.uid));
+                    if (!docSnap.exists()) { await new Promise(r => setTimeout(r, 1000)); docSnap = await getDoc(doc(db, "users", user.uid)); }
+                    if (docSnap.exists()) {
+                        currentUserData = docSnap.data();
+                        if (currentUserData.role === 'admin') { location.replace('admin.html'); return; }
+                        showMainApp();
+                    } else {
+                        // Account exists but profile is missing: show login instead of looping logout
+                        document.getElementById('auth-page').classList.remove('hidden');
+                        document.getElementById('auth-page').classList.add('flex');
+                    }
+                } else {
+                    document.getElementById('auth-page').classList.remove('hidden');
+                    document.getElementById('auth-page').classList.add('flex');
+                    document.getElementById('main-app').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('flex');
+                }
+            } catch (e) {
+                console.error('Auth check failed', e);
+                document.getElementById('auth-page').classList.remove('hidden');
+                document.getElementById('auth-page').classList.add('flex');
+            } finally { hideSplash(); }
+        });
+
+        // --- NAVIGATION ---
+        window.navTo = (pageId) => {
+            const pages = ['page-home', 'page-search', 'page-request', 'page-feed', 'page-profile', 'page-notifications'];
+            pages.forEach(p => document.getElementById(p).classList.add('hidden'));
+            document.getElementById(pageId).classList.remove('hidden');
+            
+            document.getElementById('global-header').classList.remove('hidden');
+
+            if(pageId === 'page-feed') loadGlobalRequests();
+            if(pageId === 'page-search') searchDonors();
+            if(pageId === 'page-notifications') markNotificationsAsSeen();
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.replace('text-rose-600', 'text-gray-400'));
+            
+            const btnMap = { 'page-home': 0, 'page-search': 1, 'page-feed': 2, 'page-profile': 3 };
+            const btns = document.querySelectorAll('.nav-btn');
+            
+            if(btnMap[pageId] !== undefined && btns[btnMap[pageId]]) {
+                btns[btnMap[pageId]].classList.replace('text-gray-400', 'text-rose-600');
+            }
+        }
+
+        // New: Navigate to My Requests Tab directly
+        window.navToMyRequests = () => {
+            navTo('page-request');
+            setTimeout(() => {
+                switchReqTab('all');
+            }, 100);
+        }
+        
+        // --- MODAL LOGIC ---
+        window.openModal = (modalId) => {
+            document.getElementById(modalId).classList.remove('hidden');
+        }
+
+        window.closeModal = (modalId) => {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        // --- TEAM MODAL (FIXED) ---
+        window.openTeamModal = async () => {
+            document.getElementById('team-modal').classList.remove('hidden');
+            const list = document.getElementById('team-list');
+            list.innerHTML = '<div class="text-center mt-4"><div class="loader inline-block"></div></div>';
+            
+            try {
+                const snapshot = await getDocs(collection(db, "team"));
+                
+                if(snapshot.empty) {
+                    list.innerHTML = "<p class='text-center text-gray-400 mt-4'>No team members found.</p>";
+                    return;
+                }
+                
+                let html = "";
+                snapshot.forEach(doc => {
+                    const m = doc.data();
+                    html += `
+                        <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-xl">
+                            <div class="w-12 h-12 rounded-full bg-white border border-gray-200 overflow-hidden flex items-center justify-center shadow-sm">
+                                ${m.image ? `<img src="${m.image}" class="w-full h-full object-cover">` : `<i class="fa-solid fa-user text-gray-400"></i>`}
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-gray-800 text-sm">${esc(m.name)}</h4>
+                                <p class="text-xs text-rose-500 font-semibold uppercase">${esc(m.role)}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html;
+            } catch (e) {
+                console.error(e);
+                list.innerHTML = "<p class='text-center text-red-400 mt-4'>Error loading team.</p>";
+            }
+        }
+
+
+        // --- DONOR MODAL ---
+        window.openDonorModal = (index) => {
+            const user = window.currentSearchResults[index];
+            if(!user) return;
+
+            document.getElementById('modal-name').innerText = user.name;
+            document.getElementById('modal-blood').innerText = user.blood;
+            document.getElementById('modal-location').innerText = user.district || "Unknown";
+            document.getElementById('modal-call-btn').href = `tel:${user.phone}`;
+            
+            const statusDot = document.getElementById('modal-status-dot');
+            const statusText = document.getElementById('modal-status-text');
+            
+            if(user.available) {
+                statusDot.className = "absolute bottom-1 right-1 w-6 h-6 bg-green-500 border-4 border-white rounded-full";
+                statusText.innerText = "Available Now";
+                statusText.className = "font-semibold text-green-600";
+            } else {
+                statusDot.className = "absolute bottom-1 right-1 w-6 h-6 bg-gray-400 border-4 border-white rounded-full";
+                statusText.innerText = "Not Available";
+                statusText.className = "font-semibold text-gray-400";
+            }
+            document.getElementById('donor-modal').classList.remove('hidden');
+        }
+
+        window.closeDonorModal = () => {
+            document.getElementById('donor-modal').classList.add('hidden');
+        }
+
+        // --- REQUEST POST MODAL ---
+        window.openRequestModal = (index, isFeed = true) => {
+            const req = isFeed ? window.feedData[index] : window.userRequestData[index];
+            if(!req) return;
+
+            document.getElementById('req-modal-blood').innerText = req.blood;
+            document.getElementById('req-modal-patient').innerText = req.patient;
+            document.getElementById('req-modal-problem').innerText = req.problem || "No details provided";
+            document.getElementById('req-modal-hospital').innerText = req.hospital;
+            document.getElementById('req-modal-location').innerText = req.location;
+            document.getElementById('req-modal-note').innerText = req.note || "No additional note.";
+            document.getElementById('req-modal-call').href = `tel:${esc(req.phone)}`;
+
+            const badge = document.getElementById('req-modal-badge');
+            if(req.isEmergency) {
+                badge.classList.remove('hidden');
+                badge.classList.add('inline-block');
+            } else {
+                badge.classList.add('hidden');
+                badge.classList.remove('inline-block');
+            }
+
+            let dateStr = "Urgent";
+            if (req.date) {
+                dateStr = new Date(req.date).toLocaleDateString();
+            }
+            document.getElementById('req-modal-date').innerText = dateStr;
+            document.getElementById('request-modal').classList.remove('hidden');
+        }
+
+        window.closeRequestModal = () => {
+             document.getElementById('request-modal').classList.add('hidden');
+        }
+
+
+        // --- REQUEST TABS & EDITING ---
+        window.switchReqTab = (tab) => {
+            const newView = document.getElementById('view-req-new');
+            const allView = document.getElementById('view-req-all');
+            const newTab = document.getElementById('tab-req-new');
+            const allTab = document.getElementById('tab-req-all');
+
+            if (tab === 'new') {
+                newView.classList.remove('hidden');
+                allView.classList.add('hidden');
+                newTab.classList.add('bg-white', 'text-rose-600', 'shadow');
+                newTab.classList.remove('text-gray-500');
+                allTab.classList.remove('bg-white', 'text-rose-600', 'shadow');
+                allTab.classList.add('text-gray-500');
+            } else {
+                cancelEdit(); 
+                newView.classList.add('hidden');
+                allView.classList.remove('hidden');
+                allTab.classList.add('bg-white', 'text-rose-600', 'shadow');
+                allTab.classList.remove('text-gray-500');
+                newTab.classList.remove('bg-white', 'text-rose-600', 'shadow');
+                newTab.classList.add('text-gray-500');
+                loadUserRequests(); 
+            }
+        }
+
+        window.cancelEdit = () => {
+            isEditing = false;
+            editingId = null;
+            document.getElementById('edit-mode-banner').classList.add('hidden');
+            document.getElementById('btn-post-text').innerText = "Post Request";
+            
+            document.getElementById('req-patient').value = "";
+            document.getElementById('req-problem').value = "";
+            document.getElementById('req-hospital').value = "";
+            document.getElementById('req-blood').value = "A+";
+            document.getElementById('req-date').value = "";
+            document.getElementById('req-location').selectedIndex = 0;
+            document.getElementById('req-phone').value = "";
+            document.getElementById('req-note').value = ""; 
+            document.getElementById('req-emergency').checked = false;
+        }
+
+        window.prepareEdit = (index) => {
+            const req = window.userRequestData[index];
+            if(!req) return;
+
+            isEditing = true;
+            editingId = req.id; 
+
+            switchReqTab('new');
+
+            document.getElementById('req-patient').value = req.patient;
+            document.getElementById('req-problem').value = req.problem;
+            document.getElementById('req-hospital').value = req.hospital;
+            document.getElementById('req-blood').value = req.blood;
+            document.getElementById('req-date').value = req.date;
+            document.getElementById('req-location').value = req.location;
+            document.getElementById('req-phone').value = req.phone;
+            document.getElementById('req-note').value = req.note;
+            document.getElementById('req-emergency').checked = req.isEmergency;
+
+            document.getElementById('edit-mode-banner').classList.remove('hidden');
+            document.getElementById('btn-post-text').innerText = "Update Request";
+        }
+
+        window.deleteRequest = async (index) => {
+            const req = window.userRequestData[index];
+            if(!req) return;
+            
+            if(confirm("Are you sure you want to delete this request?")) {
+                try {
+                    await deleteDoc(doc(db, "requests", req.id));
+                    showToast("Request Deleted");
+                    loadUserRequests();
+                } catch (e) {
+                    showToast("Error deleting request");
+                    console.error(e);
+                }
+            }
+        }
+
+        // --- AUTH ---
+        window.showAuthForm = (type) => {
+            if(type === 'login') {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('register-form').classList.add('hidden');
+                document.getElementById('tab-login').classList.add('bg-white', 'shadow', 'text-rose-600');
+                document.getElementById('tab-register').classList.remove('bg-white', 'shadow', 'text-rose-600');
+                document.getElementById('tab-register').classList.add('text-gray-500');
+            } else {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('register-form').classList.remove('hidden');
+                document.getElementById('tab-register').classList.add('bg-white', 'shadow', 'text-rose-600');
+                document.getElementById('tab-login').classList.remove('bg-white', 'shadow', 'text-rose-600');
+                document.getElementById('tab-login').classList.add('text-gray-500');
+            }
+        }
+
+        window.handleRegister = async () => {
+            const name = document.getElementById('reg-name').value;
+            const email = document.getElementById('reg-email').value;
+            const phone = document.getElementById('reg-phone').value;
+            const pass = document.getElementById('reg-pass').value;
+            const blood = document.getElementById('reg-blood').value;
+            const role = document.getElementById('reg-role').value;
+            const district = document.getElementById('reg-district').value;
+
+            if(!name || !email || !pass || !blood || !district) { showToast("Fill all fields"); return; }
+            toggleLoader('reg', true);
+            try {
+                const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+                const user = userCredential.user;
+                await setDoc(doc(db, "users", user.uid), {
+                    name, email, phone, blood, role, district,
+                    uid: user.uid,
+                    available: true,
+                    donationCount: 0,
+                    createdAt: new Date()
+                });
+                showToast("Account Created!");
+            } catch (error) {
+                showToast(error.message);
+                toggleLoader('reg', false);
+            }
+        }
+
+        window.handleLogin = async () => {
+            const email = document.getElementById('login-email').value;
+            const pass = document.getElementById('login-pass').value;
+            if(!email || !pass) { showToast("Enter Email & Password"); return; }
+            toggleLoader('login', true);
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                // Redirect logic handled in onAuthStateChanged
+                showToast("Login Successful");
+            } catch (error) {
+                showToast("Invalid Credentials");
+                toggleLoader('login', false);
+            }
+        }
+
+        window.handleLogout = () => {
+            signOut(auth).then(() => { location.reload(); });
+        }
+
+        function showMainApp() {
+            document.getElementById('auth-page').classList.add('hidden');
+            document.getElementById('auth-page').classList.remove('flex');
+            document.getElementById('main-app').classList.remove('hidden');
+            document.getElementById('main-app').classList.add('flex');
+            
+            if(currentUserData.name) document.getElementById('user-name-display').innerText = currentUserData.name.split(' ')[0];
+            
+            loadProfile();
+            loadGlobalRequests();
+            setupNotifications(); 
+            navTo('page-home');
+        }
+
+        // --- SUBMIT/UPDATE REQUEST ---
+        window.submitRequest = async () => {
+            const patient = document.getElementById('req-patient').value;
+            const problem = document.getElementById('req-problem').value; 
+            const hospital = document.getElementById('req-hospital').value;
+            const blood = document.getElementById('req-blood').value;
+            const date = document.getElementById('req-date').value;
+            const loc = document.getElementById('req-location').value;
+            const phone = document.getElementById('req-phone').value;
+            const note = document.getElementById('req-note').value; 
+            const isEmergency = document.getElementById('req-emergency').checked;
+
+            if(!patient || !problem || !loc || !phone) { showToast("Fill required fields"); return; }
+            toggleLoader('post', true);
+
+            const requestData = {
+                patient, problem, hospital, blood, date, location: loc, phone, note,
+                isEmergency: isEmergency,
+                status: 'active' // Default is active
+            };
+
+            try {
+                if (isEditing && editingId) {
+                    await updateDoc(doc(db, "requests", editingId), requestData);
+                    showToast("Request Updated!");
+                } else {
+                    requestData.createdBy = auth.currentUser.uid;
+                    requestData.createdAt = new Date();
+                    await addDoc(collection(db, "requests"), requestData);
+                    showToast(isEmergency ? "Emergency Request Posted!" : "Request Posted!");
+                }
+                
+                cancelEdit();
+                switchReqTab('all');
+            } catch (e) {
+                showToast("Error processing request");
+                console.error(e);
+            }
+            toggleLoader('post', false);
+        }
+
+        // --- REQUEST LIST GENERATOR ---
+        function generateRequestCard(req, index, isMyRequest = false) {
+            let sec = 0; const c = req.createdAt;
+            if (c) { if (typeof c.toDate === 'function') sec = c.toDate().getTime() / 1000; else if (c instanceof Date) sec = c.getTime() / 1000; else if (c.seconds) sec = c.seconds; }
+            const when = !sec ? 'Just now' : (Date.now() / 1000 - sec > 7 * 86400 ? new Date(sec * 1000).toLocaleDateString() : ago(sec));
+            const done = req.status === 'completed';
+            const pill = done ? '<span class="pill pill-ok"><i class="fa-solid fa-check"></i> Fulfilled</span>'
+                : (req.isEmergency ? '<span class="pill pill-e"><i class="dot"></i>Emergency</span>' : '<span class="pill pill-s">Standard</span>');
+            const place = [req.hospital, req.location].filter(Boolean).map(esc).join(', ');
+            const call = (!isMyRequest && !done) ? `<a href="tel:${esc(req.phone)}" onclick="event.stopPropagation()" class="rc-call ${req.isEmergency ? 'rc-call-e' : ''}" aria-label="Call"><i class="fa-solid fa-phone"></i></a>` : '';
+            const actions = isMyRequest ? `<div class="rc-actions">${!done ? `<button onclick="event.stopPropagation(); prepareEdit(${index})" class="rc-btn rc-edit"><i class="fa-solid fa-pen"></i> Edit</button>` : ''}<button onclick="event.stopPropagation(); deleteRequest(${index})" class="rc-btn rc-del"><i class="fa-solid fa-trash"></i> Delete</button></div>` : '';
+            const handler = isMyRequest ? `openRequestModal(${index}, false)` : `openRequestModal(${index}, true)`;
+            return `
+            <div onclick="${handler}" class="req-card ${req.isEmergency && !done ? 'urgent' : ''} ${done ? 'done' : ''}">
+                <div class="rc-blood">${esc(req.blood)}</div>
+                <div class="rc-main">
+                    <div class="rc-top"><b>${esc(req.patient)}</b><span class="rc-time">${when}</span></div>
+                    <p class="rc-loc"><i class="fa-solid fa-location-dot"></i><span>${place}</span></p>
+                    <div class="rc-tags">${req.problem ? `<span class="rc-prob"><i class="fa-solid fa-notes-medical"></i><span>${esc(req.problem)}</span></span>` : ''}${pill}</div>
+                </div>
+                ${call}${actions}
+            </div>`;
+        }
+
+
+        // --- UPDATED: LOAD GLOBAL REQUESTS (CLIENT SIDE SORT TO FIX INDEX ERROR) ---
+        async function loadGlobalRequests() {
+            const feedList = document.getElementById('feed-list');
+            // Only show Active requests in Feed
+            // REMOVE orderBy to avoid index error. We sort in JS.
+            const q = query(collection(db, "requests"), where("status", "==", "active"));
+            
+            try {
+                const snapshot = await getDocs(q);
+                let requests = [];
+                
+                snapshot.forEach(doc => { 
+                    const data = doc.data();
+                    // Ensure createdAt is handled if missing or unexpected format
+                    requests.push(data); 
+                });
+
+                // Sort descending by createdAt in JS
+                requests.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                window.feedData = requests;
+                let html = "";
+                requests.forEach((req, index) => {
+                    html += generateRequestCard(req, index);
+                });
+                
+                if(html === "") html = "<p class='text-center text-gray-400 py-4'>No active requests.</p>";
+                if(feedList) feedList.innerHTML = html;
+            } catch (e) { 
+                console.error("Feed Error:", e);
+                if(feedList) feedList.innerHTML = "<p class='text-center text-red-400 py-4'>Error loading feed.</p>";
+            }
+        }
+
+        async function loadUserRequests() {
+            const myReqList = document.getElementById('all-requests-list-view');
+            myReqList.innerHTML = '<p class="text-center text-gray-400 mt-10">Loading your requests...</p>';
+
+            try {
+                // Client sort here too to be safe, though simple query works fine
+                const q = query(collection(db, "requests"), where("createdBy", "==", auth.currentUser.uid));
+                const snapshot = await getDocs(q);
+                
+                let requests = [];
+                snapshot.forEach(doc => { 
+                     const req = doc.data();
+                     req.id = doc.id;
+                     requests.push(req);
+                });
+
+                requests.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                window.userRequestData = requests;
+                let html = "";
+                
+                requests.forEach((req, index) => {
+                     html += generateRequestCard(req, index, true);
+                });
+                
+                if(html === "") html = "<p class='text-center text-gray-400 py-10'>You haven't posted any requests yet.</p>";
+                myReqList.innerHTML = html;
+            } catch (e) { 
+                console.error("User req error", e);
+                myReqList.innerHTML = "<p class='text-center text-red-400 py-10'>Error loading requests.</p>";
+            }
+        }
+
+        function setupNotifications() {
+            if (!currentUserData || !currentUserData.blood) return;
+            
+            const q = query(
+                collection(db, "requests"), 
+                where("blood", "==", currentUserData.blood),
+                where("status", "==", "active") // Only notify for active
+            );
+
+            onSnapshot(q, (snapshot) => {
+                const notifList = document.getElementById('notification-list');
+                const badge = document.getElementById('notif-badge');
+                let html = "";
+                let hasNew = false;
+                const lastSeenTime = localStorage.getItem('lastSeenNotif') || 0;
+
+                let tempReqs = [];
+                snapshot.forEach(doc => {
+                    const req = doc.data();
+                    if (req.createdBy !== auth.currentUser.uid) {
+                        tempReqs.push(req);
+                    }
+                });
+
+                tempReqs.sort((a, b) => {
+                    const timeA = a.createdAt?.seconds || 0;
+                    const timeB = b.createdAt?.seconds || 0;
+                    return timeB - timeA;
+                });
+
+                const limitedReqs = tempReqs.slice(0, 10);
+
+                if (limitedReqs.length === 0) {
+                    notifList.innerHTML = "<p class='text-center text-gray-400 mt-10'>No requests match your blood group.</p>";
+                    return;
+                }
+
+                limitedReqs.forEach(req => {
+                    let time = req.createdAt?.seconds * 1000 || Date.now();
+                    if (time > lastSeenTime) hasNew = true;
+
+                    const timeStr = req.createdAt ? new Date(req.createdAt.seconds * 1000).toLocaleString() : 'Recent';
+                    
+                    html += `
+                    <div class="bg-white p-4 rounded-xl shadow-sm border-l-4 border-rose-500 mb-2">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-gray-800">Blood Needed: ${esc(req.blood)}</h4>
+                                <p class="text-sm text-gray-600">At ${esc(req.hospital)}, ${esc(req.location)}</p>
+                                <p class="text-xs text-gray-400 mt-1">${timeStr}</p>
+                            </div>
+                            <a href="tel:${esc(req.phone)}" class="bg-green-500 text-white w-8 h-8 rounded-full flex items-center justify-center shadow">
+                                <i class="fa-solid fa-phone text-xs"></i>
+                            </a>
+                        </div>
+                    </div>`;
+                });
+
+                notifList.innerHTML = html;
+
+                if (hasNew) {
+                    badge.classList.remove('hidden');
+                }
+            });
+        }
+
+        window.markNotificationsAsSeen = () => {
+            document.getElementById('notif-badge').classList.add('hidden');
+            localStorage.setItem('lastSeenNotif', Date.now());
+        }
+
+
+        // --- SEARCH DONORS ---
+        window.searchDonors = async () => {
+            const searchText = document.getElementById('search-text').value.toLowerCase().trim();
+            const blood = document.getElementById('search-blood').value;
+            const district = document.getElementById('search-district').value;
+            const list = document.getElementById('donors-list');
+            const statsDiv = document.getElementById('search-stats');
+
+            list.innerHTML = '<div class="text-center mt-20"><div class="loader inline-block border-rose-600"></div><p class="text-gray-500 mt-2 text-sm">Finding Donors...</p></div>';
+            
+            let q = query(collection(db, "users"), where("role", "==", "donor"));
+
+            try {
+                const snapshot = await getDocs(q);
+                let donors = [];
+                let availableCount = 0;
+
+                snapshot.forEach(doc => {
+                    const u = doc.data();
+                    if(blood !== "All" && u.blood !== blood) return;
+                    if(district && u.district !== district) return;
+                    
+                    if(searchText) {
+                        const matchName = u.name ? u.name.toLowerCase().includes(searchText) : false;
+                        const matchPhone = u.phone ? u.phone.includes(searchText) : false;
+                        const matchLoc = u.district ? u.district.toLowerCase().includes(searchText) : false;
+                        if(!matchName && !matchPhone && !matchLoc) return;
+                    }
+                    donors.push(u);
+                    if(u.available) availableCount++;
+                });
+
+                window.currentSearchResults = donors;
+
+                document.getElementById('total-found').innerText = donors.length;
+                document.getElementById('total-available').innerText = availableCount;
+                statsDiv.classList.remove('hidden');
+
+                list.innerHTML = "";
+                
+                if(donors.length === 0) {
+                    list.innerHTML = `<div class="text-center mt-10"><i class="fa-regular fa-face-frown text-4xl text-gray-300 mb-3"></i><p class="text-gray-400">No donors found.</p></div>`;
+                    return;
+                }
+
+                donors.forEach((u, index) => {
+                    const bloodColorClass = getBloodColorClass(u.blood); 
+                    const statusBadge = u.available 
+                        ? `<span class="bg-green-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1"><i class="fa-solid fa-check text-[8px]"></i> Available</span>` 
+                        : `<span class="bg-gray-300 text-white text-[10px] font-bold px-2 py-0.5 rounded-full">Unavailable</span>`;
+
+                    list.innerHTML += `
+                    <div onclick="openDonorModal(${index})" class="dc ${u.available ? '' : 'off'}">
+                        <div class="dc-blood">${esc(u.blood)}</div>
+                        <div class="dc-main">
+                            <b>${esc(u.name)}</b>
+                            <p><i class="fa-solid fa-location-dot"></i><span>${esc(u.district)}</span></p>
+                            <span class="dc-st ${u.available ? 'on' : ''}"><i></i>${u.available ? 'Available' : 'Unavailable'}</span>
+                        </div>
+                        <a href="tel:${esc(u.phone)}" onclick="event.stopPropagation()" class="dc-call" aria-label="Call"><i class="fa-solid fa-phone"></i></a>
+                    </div>`;
+                });
+            } catch (e) {
+                console.error(e);
+                list.innerHTML = '<p class="text-center text-red-400 mt-10">Something went wrong.</p>';
+            }
+        }
+
+        function getBloodColorClass(blood) {
+            if(blood.includes("B")) return "bg-blue-600";
+            if(blood.includes("A") && !blood.includes("B")) return "bg-rose-500";
+            if(blood.includes("O")) return "bg-rose-600";
+            if(blood.includes("AB")) return "bg-purple-600";
+            return "bg-gray-600";
+        }
+
+        function loadProfile() {
+            if(!currentUserData) return;
+            document.getElementById('profile-name').innerText = currentUserData.name;
+            document.getElementById('profile-district').innerText = currentUserData.district || 'N/A';
+            document.getElementById('profile-bg').innerText = currentUserData.blood;
+            document.getElementById('profile-role').innerText = currentUserData.role || 'Member';
+            document.getElementById('profile-donations-count').innerText = currentUserData.donationCount || 0;
+
+            const statusText = document.getElementById('status-text');
+            if(currentUserData.available) {
+                statusText.innerText = "Active";
+                statusText.className = "text-lg font-bold text-green-600";
+            } else {
+                statusText.innerText = "Inactive";
+                statusText.className = "text-lg font-bold text-gray-400";
+            }
+            document.getElementById('toggle-availability').checked = currentUserData.available === true;
+        }
+
+        window.toggleAvailability = async () => {
+            const toggle = document.getElementById('toggle-availability');
+            const statusText = document.getElementById('status-text');
+            const isAvailable = toggle.checked;
+            
+            if(isAvailable) {
+                statusText.innerText = "Active";
+                statusText.className = "text-lg font-bold text-green-600";
+            } else {
+                statusText.innerText = "Inactive";
+                statusText.className = "text-lg font-bold text-gray-400";
+            }
+
+            try {
+                const userRef = doc(db, "users", auth.currentUser.uid);
+                await updateDoc(userRef, { available: isAvailable });
+                currentUserData.available = isAvailable;
+                showToast(isAvailable ? "You are now Active" : "You are now Inactive");
+            } catch (e) {
+                toggle.checked = !isAvailable;
+                showToast("Connection Error");
+            }
+        }
+
+        // --- TOGGLE HISTORY (UPDATED TO FETCH FROM DB) ---
+        window.toggleHistory = async () => {
+            const section = document.getElementById('history-section');
+            const arrow = document.getElementById('history-arrow');
+            
+            if (section.classList.contains('hidden')) {
+                section.classList.remove('hidden');
+                arrow.classList.add('rotate-90');
+
+                // Load History
+                section.innerHTML = '<div class="text-center py-2"><div class="loader inline-block border-rose-500 w-4 h-4"></div></div>';
+                
+                try {
+                    const q = query(collection(db, "donations"), where("donorId", "==", auth.currentUser.uid));
+                    const snapshot = await getDocs(q);
+                    
+                    let history = [];
+                    snapshot.forEach(doc => history.push(doc.data()));
+                    
+                    // Sort client side
+                    history.sort((a,b) => (b.date?.seconds || 0) - (a.date?.seconds || 0));
+                    
+                    if(history.length === 0) {
+                        section.innerHTML = '<p class="text-center text-xs text-gray-400 py-2">No donation history yet.</p>';
+                        return;
+                    }
+
+                    let html = "";
+                    history.forEach(h => {
+                        const dateStr = h.date ? new Date(h.date.seconds * 1000).toLocaleDateString() : 'N/A';
+                        html += `
+                        <div class="flex justify-between items-center bg-white p-2 rounded border border-gray-100 mb-1">
+                            <div>
+                                <p class="text-xs font-bold text-gray-700">Saved: ${esc(h.patient)}</p>
+                                <p class="text-[10px] text-gray-400">${dateStr}</p>
+                            </div>
+                            <div class="text-green-500"><i class="fa-solid fa-circle-check"></i></div>
+                        </div>`;
+                    });
+                    section.innerHTML = html;
+
+                } catch (e) {
+                    console.error(e);
+                    section.innerHTML = '<p class="text-center text-xs text-red-400 py-2">Error loading history.</p>';
+                }
+
+            } else {
+                section.classList.add('hidden');
+                arrow.classList.remove('rotate-90');
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast');
+            toast.innerText = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => toast.style.opacity = '0', 3000);
+        }
+        function toggleLoader(idPrefix, isLoading) {
+            const loader = document.getElementById(idPrefix + '-loader');
+            const btnText = document.querySelector(`#btn-${idPrefix} span`);
+            if(isLoading) {
+                loader.style.display = 'block';
+                if(btnText) btnText.style.display = 'none';
+            } else {
+                loader.style.display = 'none';
+                if(btnText) btnText.style.display = 'block';
+            }
+        }
+
+        // ===== PROFESSIONAL ENHANCEMENTS =====
+        function esc(v) {
+            return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+        window.esc = esc;
+
+        // Offline banner
+        const offlineBanner = document.getElementById('offline-banner');
+        const syncOnline = () => offlineBanner.classList.toggle('show', !navigator.onLine);
+        window.addEventListener('online', syncOnline); window.addEventListener('offline', syncOnline); syncOnline();
+
+        // Share helpers
+        async function shareText(title, text) {
+            const url = location.href.split('#')[0];
+            try {
+                if (navigator.share) { await navigator.share({ title, text, url }); return; }
+                await navigator.clipboard.writeText(text + ' ' + url);
+                showToast('Copied to clipboard');
+            } catch (e) { /* user cancelled */ }
+        }
+        window.shareApp = () => shareText('BenapoleBlood', 'Join BenapoleBlood - find blood donors and save lives in Bangladesh.');
+        window.shareRequestModal = () => {
+            const g = id => document.getElementById(id).innerText.trim();
+            const urgent = !document.getElementById('req-modal-badge').classList.contains('hidden');
+            const phone = (document.getElementById('req-modal-call').getAttribute('href') || '').replace('tel:', '');
+            shareText('Blood needed', `${urgent ? 'URGENT: ' : ''}${g('req-modal-blood')} blood needed at ${g('req-modal-hospital')}, ${g('req-modal-location')}. Date: ${g('req-modal-date')}. Contact: ${phone}`);
+        };
+        window.whatsappFrom = (anchorId) => {
+            let n = (document.getElementById(anchorId).getAttribute('href') || '').replace(/[^0-9]/g, '');
+            if (!n) return showToast('No phone number available');
+            if (n.startsWith('0')) n = '88' + n;
+            window.open('https://wa.me/' + n, '_blank', 'noopener');
+        };
+
+        // Donation eligibility (recommended gap: 120 days)
+        const DONATION_GAP_DAYS = 120;
+        async function refreshEligibility() {
+            const t = document.getElementById('elig-title'); if (!t || !auth.currentUser) return;
+            try {
+                const snap = await getDocs(query(collection(db, "donations"), where("donorId", "==", auth.currentUser.uid)));
+                let last = 0; snap.forEach(d => { const x = d.data().date; const ms = x?.seconds ? x.seconds * 1000 : 0; if (ms > last) last = ms; });
+                const icon = document.getElementById('elig-icon'), bar = document.getElementById('elig-bar'), sub = document.getElementById('elig-sub');
+                if (!last) { t.innerText = 'Ready to donate'; sub.innerText = 'No donation recorded yet'; bar.style.width = '100%'; return; }
+                const days = Math.floor((Date.now() - last) / 86400000), left = DONATION_GAP_DAYS - days;
+                if (left <= 0) { t.innerText = 'You can donate again'; bar.style.width = '100%'; bar.className = 'h-full bg-emerald-500 rounded-full'; sub.innerText = 'Last donation ' + days + ' days ago'; }
+                else { t.innerText = 'Eligible in ' + left + ' days'; bar.style.width = Math.round(days / DONATION_GAP_DAYS * 100) + '%'; bar.className = 'h-full bg-amber-500 rounded-full'; icon.className = icon.className.replace('emerald', 'amber'); sub.innerText = 'Last donation ' + new Date(last).toLocaleDateString() + ' - rest for ' + DONATION_GAP_DAYS / 30 + ' months'; }
+            } catch (e) { t.innerText = 'Eligibility unavailable'; }
+        }
+
+        // Donor badge
+        function renderBadge() {
+            const c = currentUserData?.donationCount || 0;
+            const tiers = [[10, 'Life Hero', 'text-rose-600 bg-rose-50'], [5, 'Gold donor', 'text-amber-500 bg-amber-50'], [3, 'Silver donor', 'text-slate-500 bg-slate-100'], [1, 'Bronze donor', 'text-orange-600 bg-orange-50']];
+            const tier = tiers.find(x => c >= x[0]); const next = [...tiers].reverse().find(x => c < x[0]);
+            document.getElementById('badge-title').innerText = tier ? tier[1] : 'New donor';
+            document.getElementById('badge-icon').className = 'w-12 h-12 rounded-full flex items-center justify-center text-xl ' + (tier ? tier[2] : 'bg-slate-100 text-slate-400');
+            document.getElementById('badge-sub').innerText = next ? (next[0] - c) + ' more donation' + (next[0] - c > 1 ? 's' : '') + ' to reach ' + next[1] : 'Highest level reached. Thank you!';
+        }
+        const _loadProfile = loadProfile;
+        loadProfile = function () { _loadProfile(); renderBadge(); refreshEligibility(); const hb = document.getElementById('hero-blood'); if (hb) hb.innerText = currentUserData?.blood || '--'; };
+
+        // Compatibility guide
+        const COMPAT = { 'O-': ['All groups', 'O-'], 'O+': ['O+, A+, B+, AB+', 'O+, O-'], 'A-': ['A+, A-, AB+, AB-', 'A-, O-'], 'A+': ['A+, AB+', 'A+, A-, O+, O-'], 'B-': ['B+, B-, AB+, AB-', 'B-, O-'], 'B+': ['B+, AB+', 'B+, B-, O+, O-'], 'AB-': ['AB+, AB-', 'AB-, A-, B-, O-'], 'AB+': ['AB+', 'All groups'] };
+        document.getElementById('compat-body').innerHTML = Object.entries(COMPAT).map(([g, [to, from]]) =>
+            `<tr><td class="font-black text-rose-600">${g}</td><td class="text-xs text-gray-600">${to}</td><td class="text-xs text-gray-600">${from}</td></tr>`).join('');
+
+        // Eligibility checklist
+        const CHECKS = [['I am 18-60 years old', 1], ['I weigh at least 50 kg', 1], ['I feel healthy today (no fever, cold or infection)', 1], ['My last donation was more than 4 months ago', 1], ['I have not had a tattoo, piercing or surgery in the last 6 months', 1], ['I am pregnant, breastfeeding or on antibiotics', 0], ['I have been diagnosed with hepatitis, HIV or a blood disorder', 0]];
+        const checkList = document.getElementById('check-list');
+        checkList.innerHTML = CHECKS.map((c, i) => `<label class="flex items-start gap-3 bg-slate-50 p-3 rounded-xl cursor-pointer"><input type="checkbox" data-i="${i}" class="mt-1 accent-rose-600"><span>${c[0]}</span></label>`).join('');
+        checkList.addEventListener('change', () => {
+            const boxes = [...checkList.querySelectorAll('input')];
+            const okAll = boxes.every((b, i) => CHECKS[i][1] ? b.checked : !b.checked);
+            const res = document.getElementById('check-result');
+            res.className = 'mt-4 p-3 rounded-xl text-sm font-semibold ' + (okAll ? 'bg-emerald-50 text-emerald-700' : 'bg-amber-50 text-amber-700');
+            res.innerText = okAll ? 'You look eligible. Visit a donation centre to confirm.' : 'You may not be eligible right now. Check with a doctor or blood bank.';
+        });
+
+        // ===== MOTION =====
+        function countUp(el, to, ms = 900) {
+            if (!el || matchMedia('(prefers-reduced-motion: reduce)').matches) { if (el) el.innerText = to; return; }
+            const t0 = performance.now();
+            const tick = t => { const k = Math.min(1, (t - t0) / ms); el.innerText = Math.round(to * (1 - Math.pow(1 - k, 3))); if (k < 1) requestAnimationFrame(tick); };
+            requestAnimationFrame(tick);
+        }
+        const _lp2 = loadProfile;
+        loadProfile = function () { _lp2(); countUp(document.getElementById('profile-donations-count'), currentUserData?.donationCount || 0); };
+        document.addEventListener('pointerdown', e => {
+            const b = e.target.closest('button, .tile, .tool'); if (!b || b.disabled) return;
+            if (getComputedStyle(b).position === 'static') b.style.position = 'relative';
+            b.style.overflow = 'hidden';
+            const r = b.getBoundingClientRect(), d = document.createElement('span');
+            d.className = 'rip'; d.style.left = (e.clientX - r.left) + 'px'; d.style.top = (e.clientY - r.top) + 'px';
+            b.appendChild(d); setTimeout(() => d.remove(), 650);
+        });
+
+        // ===== LIVE HOME =====
+        const GREET = () => { const h = new Date().getHours(); return h < 5 ? 'Still up?' : h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : h < 21 ? 'Good evening' : 'Good night'; };
+        const TIPS = ['One donation can help save up to three lives.', 'Healthy adults can donate every 4 months.', 'Drink water and eat well before you donate.', 'A donation takes about 10 minutes of your time.'];
+        let tipIdx = 0;
+        function paintGreeting() { const g = document.getElementById('hero-greet'); if (g) g.innerText = GREET(); }
+        paintGreeting(); setInterval(paintGreeting, 60000);
+        setInterval(() => {
+            const el = document.getElementById('hero-tip'); if (!el) return;
+            el.style.opacity = 0; el.style.transform = 'translateY(6px)';
+            setTimeout(() => { tipIdx = (tipIdx + 1) % TIPS.length; el.innerText = TIPS[tipIdx]; el.style.opacity = ''; el.style.transform = ''; }, 400);
+        }, 6000);
+
+        function ago(sec) {
+            if (!sec) return 'Just now';
+            const m = Math.floor((Date.now() / 1000 - sec) / 60);
+            if (m < 1) return 'Just now'; if (m < 60) return m + ' min ago';
+            const h = Math.floor(m / 60); if (h < 24) return h + ' hr ago';
+            return Math.floor(h / 24) + ' d ago';
+        }
+        let liveReqs = null, liveUnsub = null;
+        function renderLive() {
+            const strip = document.getElementById('live-strip'); if (!strip || !liveReqs) return;
+            if (!liveReqs.length) { strip.innerHTML = '<div class="live-empty"><i class="fa-solid fa-circle-check mb-1 block text-base" style="color:#16A34A"></i>No active requests right now.</div>'; return; }
+            strip.innerHTML = liveReqs.slice(0, 6).map((r, i) => `
+                <button onclick="openRequestModal(${i}, true)" class="live-card ${r.isEmergency ? 'urgent' : ''}" style="animation-delay:${i * 60}ms">
+                    <span class="bg">${esc(r.blood)}</span>
+                    <span class="info">
+                        <b>${esc(r.patient)}</b>
+                        <small>${esc(r.hospital)}, ${esc(r.location)}</small>
+                        <em>${r.isEmergency ? '<i class="dot"></i>Emergency' : 'Standard'}<span>${ago(r.createdAt?.seconds)}</span></em>
+                    </span>
+                    <i class="fa-solid fa-chevron-right chev"></i>
+                </button>`).join('');
+        }
+        function startLiveHome() {
+            if (liveUnsub || !auth.currentUser) return;
+            liveUnsub = onSnapshot(query(collection(db, "requests"), where("status", "==", "active")), snap => {
+                const arr = []; snap.forEach(d => arr.push(d.data()));
+                arr.sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0));
+                liveReqs = arr; window.feedData = arr;
+                countUp(document.getElementById('stat-active'), arr.length, 600);
+                renderLive(); renderFeedFiltered();
+            }, () => { liveUnsub = null; });
+            setInterval(renderLive, 60000);
+            (async () => {
+                try {
+                    const countOf = async q => { try { return (await getDocs(q)).size; } catch (e) { return 0; } };
+                    countOf(query(collection(db, "users"), where("role", "==", "donor"))).then(n => countUp(document.getElementById('stat-donors'), n, 1100)).catch(() => { const c = document.getElementById('stat-donors')?.closest('.stat'); if (c) c.style.display = 'none'; });
+                    countOf(query(collection(db, "requests"), where("status", "==", "completed"))).then(n => countUp(document.getElementById('stat-helped'), n, 1100)).catch(() => {});
+                } catch (e) { /* stats are optional */ }
+            })();
+        }
+        const _lp3 = loadProfile;
+        loadProfile = function () { _lp3(); startLiveHome(); };
+        document.addEventListener('pointerdown', e => { if (e.target.closest('button, .tile, .tool, .live-card')) navigator.vibrate?.(8); });
+
+        const _lp4 = loadProfile;
+        loadProfile = function () { _lp4(); const a = document.getElementById('hero-avatar'); if (a) a.innerText = ((currentUserData?.name || '?').trim()[0] || '?').toUpperCase(); };
+
+        // ===== FEED PAGE =====
+        const FEED_CHIPS = ['All', 'Emergency', 'A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+        let feedFilter = 'All';
+        function renderFeedChips() {
+            const box = document.getElementById('feed-filters'); if (!box) return;
+            box.innerHTML = FEED_CHIPS.map(c => `<button onclick="setFeedFilter('${c}')" class="chip ${c === feedFilter ? 'on' : ''}">${c}</button>`).join('');
+        }
+        window.setFeedFilter = f => { feedFilter = f; renderFeedChips(); renderFeedFiltered(); };
+        function renderFeedFiltered() {
+            const list = document.getElementById('feed-list'), count = document.getElementById('feed-count');
+            if (!list || !Array.isArray(window.feedData)) return;
+            const items = [];
+            window.feedData.forEach((r, i) => { if (feedFilter === 'All' || (feedFilter === 'Emergency' ? r.isEmergency : r.blood === feedFilter)) items.push(generateRequestCard(r, i)); });
+            const n = items.length;
+            count.innerText = n + (n === 1 ? ' active request' : ' active requests') + (feedFilter !== 'All' ? ' \u00B7 ' + feedFilter : '');
+            list.innerHTML = n ? items.join('') : '<div class="feed-empty"><i class="fa-solid fa-circle-check"></i>No requests match this filter.</div>';
+        }
+        renderFeedChips();
+        const _lgr = loadGlobalRequests;
+        loadGlobalRequests = async function () { await _lgr(); renderFeedFiltered(); };
+
+        // ===== PROFILE EXTRAS =====
+        window.openMyRequests = () => { navTo('page-request'); switchReqTab('all'); };
+        window.shareDonorCard = () => {
+            const u = currentUserData; if (!u) return;
+            shareText('BenapoleBlood donor', u.blood + ' blood donor from ' + (u.district || 'Bangladesh') + ' on BenapoleBlood. Find donors and save lives.');
+        };
+        window.openEditProfile = () => {
+            const u = currentUserData; if (!u) return;
+            document.getElementById('ep-name').value = u.name || '';
+            document.getElementById('ep-phone').value = u.phone || '';
+            document.getElementById('ep-district').value = u.district || '';
+            openModal('edit-profile-modal');
+        };
+        window.saveProfile = async () => {
+            const name = document.getElementById('ep-name').value.trim();
+            const phone = document.getElementById('ep-phone').value.trim();
+            const district = document.getElementById('ep-district').value;
+            if (!name) return showToast('Please enter your name');
+            if (!/^[0-9+\-\s]{6,16}$/.test(phone)) return showToast('Enter a valid phone number');
+            if (!district) return showToast('Please select a district');
+            const btn = document.getElementById('ep-save'); btn.disabled = true; btn.innerText = 'Saving...';
+            try {
+                await updateDoc(doc(db, "users", auth.currentUser.uid), { name, phone, district });
+                Object.assign(currentUserData, { name, phone, district });
+                loadProfile(); closeModal('edit-profile-modal'); showToast('Profile updated');
+            } catch (e) { showToast('Could not save. Try again.'); }
+            btn.disabled = false; btn.innerText = 'Save changes';
+        };
+        async function refreshProfileExtras() {
+            const c = currentUserData?.donationCount || 0;
+            const lives = document.getElementById('pf-lives'); if (lives) lives.innerText = c * 3;
+            const t = document.getElementById('pf-elig-title'); if (!t || !auth.currentUser) return;
+            const sub = document.getElementById('pf-elig-sub'), bar = document.getElementById('pf-elig-bar'), ic = document.getElementById('pf-elig-ic');
+            try {
+                const snap = await getDocs(query(collection(db, "donations"), where("donorId", "==", auth.currentUser.uid)));
+                let last = 0; snap.forEach(d => { const x = d.data().date; const ms = x?.seconds ? x.seconds * 1000 : 0; if (ms > last) last = ms; });
+                if (!last) { t.innerText = 'Ready to donate'; sub.innerText = 'No donation recorded yet'; bar.style.width = '100%'; bar.style.background = '#16A34A'; return; }
+                const days = Math.floor((Date.now() - last) / 86400000), left = DONATION_GAP_DAYS - days;
+                if (left <= 0) { t.innerText = 'You can donate again'; sub.innerText = 'Last donation ' + days + ' days ago'; bar.style.width = '100%'; bar.style.background = '#16A34A'; ic.className = 'fa-solid fa-calendar-check'; }
+                else { t.innerText = 'Eligible in ' + left + ' days'; sub.innerText = 'Last donation ' + new Date(last).toLocaleDateString(); bar.style.width = Math.round(days / DONATION_GAP_DAYS * 100) + '%'; bar.style.background = '#D97706'; ic.className = 'fa-solid fa-hourglass-half'; }
+            } catch (e) { t.innerText = 'Status unavailable'; }
+            try {
+                const rs = await getDocs(query(collection(db, "requests"), where("createdBy", "==", auth.currentUser.uid)));
+                const n = rs.size, el = document.getElementById('pf-req-count');
+                if (el) { el.innerText = n; el.classList.toggle('hidden', !n); }
+            } catch (e) {}
+        }
+        const _lpExtras = loadProfile;
+        loadProfile = function () { _lpExtras(); refreshProfileExtras(); };
+
+        let _sdT; window.debouncedSearch = () => { clearTimeout(_sdT); _sdT = setTimeout(() => searchDonors(), 350); };
+    </script>
+</body>
+</html>

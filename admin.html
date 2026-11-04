@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BenapoleBlood Admin</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#0B2530">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Hind+Siliguri:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing:border-box; margin:0; padding:0; }
+        html, body { height:100%; }
+        body { font-family:'Plus Jakarta Sans','Hind Siliguri',system-ui,sans-serif; background:#F2F7F9; color:#0F2A35; -webkit-tap-highlight-color:transparent; letter-spacing:-.005em; }
+        button { font-family:inherit; border:0; background:none; color:inherit; }
+        input, select { font-family:inherit; }
+        a { text-decoration:none; }
+        .hidden { display:none !important; }
+        .inline-block { display:inline-block; }
+        @keyframes spin { to { transform:rotate(360deg); } }
+        @keyframes fade { from { opacity:0; } to { opacity:1; } }
+        @keyframes rise { from { opacity:0; transform:translateY(16px); } to { opacity:1; transform:none; } }
+        .loader { border:3px solid #E3EAEE; border-top-color:#0E7490; border-radius:50%; width:22px; height:22px; animation:spin 1s linear infinite; display:none; }
+        .loader.inline-block { display:inline-block; }
+        .ad-root { position:fixed; inset:0; display:flex; flex-direction:row; }
+        #toast { position:fixed; top:20px; left:50%; transform:translateX(-50%); background:#1E293B; color:#fff; padding:9px 16px; border-radius:8px; font-size:13px; box-shadow:0 8px 24px rgba(0,0,0,.2); opacity:0; transition:opacity .25s; z-index:200; pointer-events:none; }
+        #offline-banner { position:fixed; top:0; left:0; right:0; z-index:150; background:#1E293B; color:#fff; font-size:12px; text-align:center; padding:6px; transform:translateY(-100%); transition:transform .3s; }
+        #offline-banner.show { transform:none; }
+        :focus-visible { outline:2px solid #0E7490; outline-offset:2px; }
+        /* splash + login */
+        #splash { position:fixed; inset:0; z-index:180; background:#0B6B83; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; color:#fff; transition:opacity .5s; }
+        #splash .lg { width:64px; height:64px; border-radius:16px; background:#fff; color:#0B6B83; display:grid; place-items:center; font-size:28px; }
+        #splash p { font-size:13px; opacity:.8; }
+        #login-page { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; padding:20px; background:linear-gradient(180deg,#0B2530 0,#0B2530 38%,#F2F7F9 38%); }
+        .lg-card { width:min(400px,100%); background:#fff; border:1px solid #E3EAEE; border-radius:12px; padding:26px 24px 22px; box-shadow:0 20px 50px -20px rgba(11,37,48,.45); animation:rise .4s both; }
+        .lg-brand { display:flex; align-items:center; gap:12px; margin-bottom:20px; }
+        .lg-brand .ad-logo { width:40px; height:40px; font-size:18px; }
+        .lg-brand b { display:block; font-size:16px; font-weight:700; line-height:1.2; } .lg-brand span { font-size:12px; color:#6B7A86; }
+        .lg-card label { display:block; font-size:11px; font-weight:700; color:#6B7A86; margin:14px 0 5px; letter-spacing:.02em; }
+        .lg-card .ad-in { width:100%; padding:11px 12px; font-size:14px; }
+        .lg-err { margin-top:12px; font-size:12.5px; color:#B42318; background:#FDECEC; padding:9px 11px; border-radius:8px; }
+        .lg-btn { width:100%; margin-top:18px; padding:12px; border-radius:8px; background:#0E7490; color:#fff; font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; gap:9px; }
+        .lg-btn:hover { background:#0B6B83; } .lg-btn[disabled] { opacity:.65; pointer-events:none; }
+        .lg-foot { margin-top:16px; text-align:center; font-size:12px; color:#6B7A86; } .lg-foot a { color:#0E7490; font-weight:600; }
+
+        #admin-panel { background:#F2F7F9; color:#0F2A35; }
+        #admin-panel.flex { display:flex; }
+        #admin-panel button { cursor:pointer; }
+        .ad-side { width:236px; background:#0B2530; display:flex; flex-direction:column; flex-shrink:0; height:100%; z-index:60; transition:transform .25s; }
+        .ad-brand { display:flex; align-items:center; gap:11px; padding:18px 18px 16px; border-bottom:1px solid rgba(255,255,255,.07); }
+        .ad-logo { width:34px; height:34px; border-radius:9px; background:#0E7490; color:#fff; display:grid; place-items:center; font-size:15px; }
+        .ad-brand b { display:block; color:#fff; font-size:15px; font-weight:700; line-height:1.15; }
+        .ad-brand span { font-size:11px; color:#7F98A3; }
+        .ad-nav { flex:1; overflow-y:auto; padding:10px 10px; }
+        .ad-nav p { font-size:10px; font-weight:700; letter-spacing:.1em; text-transform:uppercase; color:#5F7A86; padding:14px 10px 6px; }
+        .ad-nav button { display:flex; align-items:center; gap:11px; width:100%; padding:9px 10px; border-radius:8px; font-size:13px; font-weight:600; color:#A8BDC6; text-align:left; margin-bottom:2px; transition:background .15s,color .15s; }
+        .ad-nav button i { width:16px; text-align:center; font-size:13px; }
+        .ad-nav button:hover { background:rgba(255,255,255,.06); color:#fff; }
+        .ad-nav button.on { background:#0E7490; color:#fff; }
+        .ad-nav em { margin-left:auto; font-style:normal; font-size:10.5px; font-weight:700; background:#D64545; color:#fff; padding:1px 7px; border-radius:10px; }
+        .ad-side-foot { padding:12px; border-top:1px solid rgba(255,255,255,.07); }
+        .ad-me { display:flex; align-items:center; gap:10px; padding:4px 4px 10px; min-width:0; }
+        .ad-me div:last-child { min-width:0; }
+        .ad-me b { display:block; font-size:12.5px; color:#fff; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ad-me span { display:block; font-size:10.5px; color:#7F98A3; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ad-av { width:32px; height:32px; border-radius:8px; background:#164B5E; color:#fff; display:grid; place-items:center; font-weight:700; font-size:13px; flex-shrink:0; }
+        .ad-out { display:flex; align-items:center; gap:9px; width:100%; padding:8px 10px; border-radius:8px; font-size:12.5px; font-weight:600; color:#F0A3A3; transition:background .15s; }
+        .ad-out:hover { background:rgba(214,69,69,.15); }
+        .ad-main { flex:1; min-width:0; display:flex; flex-direction:column; height:100%; }
+        .ad-top { display:flex; align-items:center; gap:12px; height:60px; padding:0 22px; background:#fff; border-bottom:1px solid #E3EAEE; flex-shrink:0; }
+        .ad-crumb { flex:1; min-width:0; }
+        .ad-crumb h1 { font-size:16px; font-weight:700; color:#0F2A35; line-height:1.2; }
+        .ad-crumb p { font-size:11.5px; color:#7A8591; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ad-burger { display:none; }
+        .ad-content { flex:1; overflow-y:auto; padding:20px 22px 40px; }
+        .ad-view { max-width:1180px; margin:0 auto; animation:fade .25s both; }
+        .ad-view.hidden { display:none; }
+        .ad-btn { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:8px 13px; border:1px solid #D5DEE4; background:#fff; color:#33475A; border-radius:8px; font-size:12.5px; font-weight:600; transition:background .15s,border-color .15s; white-space:nowrap; }
+        .ad-btn:hover { background:#F5F8FA; border-color:#C3CFD7; }
+        .ad-btn-p { background:#0E7490; border-color:#0E7490; color:#fff; } .ad-btn-p:hover { background:#0B6B83; border-color:#0B6B83; }
+        .ad-btn-d { background:#D64545; border-color:#D64545; color:#fff; } .ad-btn-d:hover { background:#C13838; border-color:#C13838; }
+        .ad-btn[disabled] { opacity:.6; pointer-events:none; }
+        .ad-ib { width:30px; height:30px; display:inline-grid; place-items:center; border-radius:7px; color:#5B6B78; font-size:12px; border:1px solid transparent; transition:background .15s,color .15s; }
+        .ad-ib:hover { background:#EAF2F5; color:#0E7490; }
+        .ad-ib.dg:hover { background:#FDECEC; color:#C62828; } .ad-ib.ok:hover { background:#E3F5EA; color:#15803D; }
+        .ad-link { font-size:12px; font-weight:600; color:#0E7490; } .ad-link:hover { text-decoration:underline; }
+        .ad-in { padding:8px 11px; border:1px solid #D5DEE4; border-radius:8px; font-size:12.5px; background:#fff; color:#0F2A35; min-width:0; }
+        .ad-in:focus, .ad-search input:focus { outline:none; border-color:#0E7490; box-shadow:0 0 0 3px rgba(14,116,144,.12); }
+        .ad-search { position:relative; flex:1; min-width:200px; }
+        .ad-search i { position:absolute; left:11px; top:50%; transform:translateY(-50%); font-size:12px; color:#8A97A3; }
+        .ad-search input { width:100%; padding:8px 11px 8px 32px; border:1px solid #D5DEE4; border-radius:8px; font-size:12.5px; background:#fff; }
+        .ad-bar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+        .ad-muted { font-size:12px; color:#7A8591; }
+        .ad-card { background:#fff; border:1px solid #E3EAEE; border-radius:10px; }
+        .ad-ch { display:flex; align-items:center; justify-content:space-between; padding:13px 16px; border-bottom:1px solid #EDF2F5; }
+        .ad-ch h3 { font-size:13px; font-weight:700; color:#0F2A35; } .ad-ch span { font-size:11.5px; color:#7A8591; }
+        .ad-kpis { display:grid; grid-template-columns:repeat(auto-fit,minmax(168px,1fr)); gap:12px; margin-bottom:14px; }
+        .ad-kpi { background:#fff; border:1px solid #E3EAEE; border-radius:10px; padding:14px 15px; display:flex; gap:12px; align-items:center; }
+        .ad-kpi .ic { width:38px; height:38px; border-radius:9px; display:grid; place-items:center; font-size:15px; flex-shrink:0; }
+        .ad-kpi p { font-size:11.5px; color:#6B7A86; font-weight:500; }
+        .ad-kpi b { display:block; font-size:22px; font-weight:800; letter-spacing:-.02em; line-height:1.15; color:#0F2A35; }
+        .ad-kpi small { font-size:10.5px; color:#8A97A3; }
+        .t-teal { background:#E3F2F6; color:#0E7490; } .t-red { background:#FDECEC; color:#C62828; } .t-green { background:#E3F5EA; color:#15803D; } .t-amber { background:#FEF3DC; color:#B45309; } .t-purple { background:#EEEAFB; color:#6D4FD6; } .t-gray { background:#EEF1F4; color:#5B6672; }
+        .ad-grid2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+        .ad-bars { padding:14px 16px 16px; display:grid; gap:9px; }
+        .ad-brow { display:grid; grid-template-columns:34px 1fr 54px; align-items:center; gap:10px; font-size:12px; }
+        .ad-brow b { font-weight:700; color:#C62828; }
+        .ad-track { height:8px; background:#EDF2F5; border-radius:4px; overflow:hidden; } .ad-track div { height:100%; background:#0E7490; border-radius:4px; transition:width .6s; }
+        .ad-brow span { text-align:right; color:#5B6B78; font-weight:600; }
+        .ad-fu { padding:16px; } .ad-fu .big { font-size:30px; font-weight:800; letter-spacing:-.02em; } .ad-fu .big small { font-size:13px; font-weight:600; color:#7A8591; margin-left:6px; }
+        .ad-seg { display:flex; height:10px; border-radius:5px; overflow:hidden; background:#EDF2F5; margin:12px 0; } .ad-seg div { height:100%; }
+        .ad-legend { display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:#5B6B78; } .ad-legend i { display:inline-block; width:8px; height:8px; border-radius:2px; margin-right:6px; }
+        .ad-list > div { display:flex; align-items:center; gap:11px; padding:10px 16px; border-bottom:1px solid #F0F4F6; } .ad-list > div:last-child { border-bottom:0; }
+        .ad-list .bx { width:34px; height:34px; border-radius:8px; background:#FDECEC; color:#C62828; font-weight:800; font-size:12px; display:grid; place-items:center; flex-shrink:0; }
+        .ad-list .tx { flex:1; min-width:0; } .ad-list .tx b { display:block; font-size:12.5px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ad-list .tx span { font-size:11px; color:#7A8591; display:block; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ad-empty { padding:28px 16px; text-align:center; font-size:12.5px; color:#8A97A3; }
+        .ad-tcard { overflow:hidden; }
+        .ad-tw { overflow-x:auto; }
+        .ad-table { width:100%; border-collapse:collapse; min-width:760px; }
+        .ad-table th { text-align:left; font-size:10.5px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#7A8591; background:#F8FAFB; padding:10px 14px; border-bottom:1px solid #E3EAEE; white-space:nowrap; }
+        .ad-table td { padding:10px 14px; border-bottom:1px solid #F0F4F6; font-size:12.5px; vertical-align:middle; }
+        .ad-table tr:last-child td { border-bottom:0; } .ad-table tbody tr:hover { background:#FAFCFD; }
+        .ad-table .r { text-align:right; } .ad-table td.r { white-space:nowrap; }
+        .ad-who { display:flex; align-items:center; gap:10px; min-width:0; }
+        .ad-who .av { width:32px; height:32px; border-radius:8px; background:#E3F2F6; color:#0E7490; font-weight:700; font-size:12px; display:grid; place-items:center; flex-shrink:0; text-transform:uppercase; }
+        .ad-who b { display:block; font-weight:600; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ad-who span { display:block; font-size:11px; color:#7A8591; max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+        .ad-pill { display:inline-flex; align-items:center; gap:5px; font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:5px; white-space:nowrap; }
+        .ad-pill i { width:5px; height:5px; border-radius:50%; background:currentColor; }
+        .ad-bl { display:inline-block; font-size:11.5px; font-weight:800; color:#C62828; background:#FDECEC; padding:2px 8px; border-radius:5px; }
+        .ad-pager { display:flex; align-items:center; justify-content:space-between; padding:10px 14px; border-top:1px solid #EDF2F5; font-size:12px; color:#6B7A86; } .ad-pager:empty { display:none; }
+        .ad-pager div { display:flex; gap:6px; }
+        .ad-load { padding:30px; text-align:center; } .ad-load.hidden { display:none; }
+        .ad-tabs { display:flex; gap:4px; background:#E8EFF2; padding:3px; border-radius:9px; }
+        .ad-tabs button { padding:6px 12px; border-radius:7px; font-size:12px; font-weight:600; color:#5B6B78; display:flex; gap:6px; align-items:center; }
+        .ad-tabs button em { font-style:normal; font-size:10.5px; color:#8A97A3; }
+        .ad-tabs button.on { background:#fff; color:#0E7490; box-shadow:0 1px 2px rgba(15,42,53,.1); } .ad-tabs button.on em { color:#0E7490; }
+        .ad-form3 { display:grid; grid-template-columns:1fr 1fr 1.3fr auto; gap:8px; }
+        .ad-team { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; }
+        .ad-tm { background:#fff; border:1px solid #E3EAEE; border-radius:10px; padding:12px; display:flex; align-items:center; gap:11px; }
+        .ad-tm .im { width:42px; height:42px; border-radius:9px; background:#EEF3F6; overflow:hidden; display:grid; place-items:center; color:#9AA8B3; flex-shrink:0; } .ad-tm .im img { width:100%; height:100%; object-fit:cover; }
+        .ad-tm div.tx { flex:1; min-width:0; } .ad-tm b { display:block; font-size:13px; font-weight:600; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; } .ad-tm span { font-size:11px; color:#0E7490; font-weight:600; }
+        .ad-ov { position:fixed; inset:0; z-index:90; background:rgba(11,37,48,.55); display:flex; align-items:center; justify-content:center; padding:16px; } .ad-ov.hidden { display:none; }
+        .ad-md { background:#fff; border-radius:12px; width:min(440px,100%); max-height:90vh; overflow-y:auto; box-shadow:0 20px 50px rgba(0,0,0,.3); animation:rise .25s both; }
+        .ad-mh { padding:16px 18px 4px; } .ad-mh h3 { font-size:15px; font-weight:700; } .ad-mh p { font-size:12.5px; color:#6B7A86; margin-top:4px; line-height:1.5; }
+        .ad-mb { padding:10px 18px 4px; display:grid; gap:10px; }
+        .ad-mb label { display:block; font-size:11px; font-weight:700; color:#6B7A86; margin-bottom:4px; letter-spacing:.02em; } .ad-mb .ad-in { width:100%; padding:9px 11px; font-size:13px; }
+        .ad-mf { display:flex; justify-content:flex-end; gap:8px; padding:14px 18px 16px; }
+        .ad-note { font-size:11.5px; padding:8px 10px; border-radius:7px; background:#F2F7F9; color:#5B6B78; } .ad-note.ok { background:#E3F5EA; color:#15803D; } .ad-note.no { background:#FEF3DC; color:#B45309; }
+        .ad-chk { display:flex; align-items:center; gap:9px; font-size:13px; font-weight:600; } .ad-chk input { width:16px; height:16px; accent-color:#0E7490; }
+        .ad-overlay { display:none; }
+        @media (max-width:860px) {
+            .ad-side { position:fixed; left:0; top:0; bottom:0; transform:translateX(-100%); }
+            .ad-side.open { transform:none; box-shadow:0 0 40px rgba(0,0,0,.4); }
+            .ad-overlay.open { display:block; position:fixed; inset:0; background:rgba(11,37,48,.5); z-index:55; }
+            .ad-burger { display:inline-grid; }
+            .ad-top { padding:0 14px; } .ad-content { padding:14px 12px 40px; }
+            .ad-grid2 { grid-template-columns:1fr; }
+            .ad-form3 { grid-template-columns:1fr; }
+            .ad-top-actions .ad-btn span { display:none; }
+        }
+        </style>
+</head>
+<body>
+    <div id="offline-banner"><i class="fa-solid fa-wifi"></i> You are offline. Some features may not work.</div>
+
+    <div id="splash"><div class="lg"><i class="fa-solid fa-droplet"></i></div><b>BenapoleBlood Admin</b><p>Loading console...</p></div>
+
+    <!-- LOGIN -->
+    <div id="login-page" class="hidden">
+        <div class="lg-card">
+            <div class="lg-brand"><div class="ad-logo"><i class="fa-solid fa-droplet"></i></div><div><b>BenapoleBlood Admin</b><span>Login with an admin account to continue</span></div></div>
+            <label for="lg-email">Admin Email</label>
+            <input id="lg-email" type="email" class="ad-in" autocomplete="username" placeholder="Admin email address" onkeydown="if(event.key==='Enter')adminLogin()">
+            <label for="lg-pass">Password</label>
+            <input id="lg-pass" type="password" class="ad-in" autocomplete="off" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')adminLogin()">
+            <div id="lg-err" class="lg-err hidden"></div>
+            <button id="lg-btn" class="lg-btn" onclick="adminLogin()"><span>Open dashboard</span></button>
+            <p class="lg-foot">Looking for the donor app? <a href="index.html">Open BenapoleBlood</a></p>
+        </div>
+    </div>
+
+        <div id="admin-panel" class="ad-root hidden">
+            <div id="ad-overlay" class="ad-overlay" onclick="toggleMobileMenu()"></div>
+
+            <!-- SIDEBAR -->
+            <aside id="adm-sidebar" class="ad-side">
+                <div class="ad-brand">
+                    <div class="ad-logo"><i class="fa-solid fa-droplet"></i></div>
+                    <div><b>BenapoleBlood</b><span>Admin console</span></div>
+                </div>
+                <nav class="ad-nav">
+                    <p>Workspace</p>
+                    <button onclick="adminNav('dash')" id="nav-dash" class="on"><i class="fa-solid fa-chart-pie"></i>Overview</button>
+                    <button onclick="adminNav('reqs')" id="nav-reqs"><i class="fa-solid fa-droplet"></i>Requests<em id="nav-reqs-count" class="hidden">0</em></button>
+                    <button onclick="adminNav('users')" id="nav-users"><i class="fa-solid fa-users"></i>Members</button>
+                    <button onclick="adminNav('dons')" id="nav-dons"><i class="fa-solid fa-hand-holding-droplet"></i>Donations</button>
+                    <p>Content</p>
+                    <button onclick="adminNav('team')" id="nav-team"><i class="fa-solid fa-user-shield"></i>Team</button>
+                </nav>
+                <div class="ad-side-foot">
+                    <div class="ad-me">
+                        <div class="ad-av" id="ad-me-av">A</div>
+                        <div><b id="ad-me-name">Admin</b><span id="ad-me-mail"></span></div>
+                    </div>
+                    <button onclick="handleLogout()" class="ad-out"><i class="fa-solid fa-arrow-right-from-bracket"></i>Log out</button>
+                </div>
+            </aside>
+
+            <!-- MAIN -->
+            <div class="ad-main">
+                <header class="ad-top">
+                    <button class="ad-ib ad-burger" onclick="toggleMobileMenu()" aria-label="Menu"><i class="fa-solid fa-bars"></i></button>
+                    <div class="ad-crumb"><h1 id="ad-title">Overview</h1><p id="ad-sub">Platform summary and recent activity</p></div>
+                    <div class="ad-top-actions">
+                        <button class="ad-btn" onclick="admRefresh()"><i class="fa-solid fa-rotate" id="ad-refresh-ic"></i><span>Refresh</span></button>
+                    </div>
+                </header>
+
+                <main class="ad-content">
+
+                    <!-- OVERVIEW -->
+                    <section id="view-dash" class="ad-view">
+                        <div class="ad-kpis" id="ad-kpis"></div>
+                        <div class="ad-grid2">
+                            <div class="ad-card">
+                                <div class="ad-ch"><h3>Donors by blood group</h3><span id="ad-bg-note"></span></div>
+                                <div id="ad-bg-bars" class="ad-bars"></div>
+                            </div>
+                            <div class="ad-card">
+                                <div class="ad-ch"><h3>Request fulfilment</h3></div>
+                                <div id="ad-fulfil"></div>
+                            </div>
+                        </div>
+                        <div class="ad-grid2">
+                            <div class="ad-card">
+                                <div class="ad-ch"><h3>Latest requests</h3><button class="ad-link" onclick="adminNav('reqs')">View all</button></div>
+                                <div id="ad-recent-reqs" class="ad-list"></div>
+                            </div>
+                            <div class="ad-card">
+                                <div class="ad-ch"><h3>New members</h3><button class="ad-link" onclick="adminNav('users')">View all</button></div>
+                                <div id="ad-recent-users" class="ad-list"></div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- MEMBERS -->
+                    <section id="view-users" class="ad-view hidden">
+                        <div class="ad-bar">
+                            <div class="ad-search"><i class="fa-solid fa-magnifying-glass"></i><input id="u-q" type="text" placeholder="Search name, email, phone or district" oninput="admUsersFilter()"></div>
+                            <select id="u-role" class="ad-in" onchange="admUsersFilter()"><option value="">All roles</option><option value="donor">Donor</option><option value="receiver">Receiver</option><option value="admin">Admin</option></select>
+                            <select id="u-blood" class="ad-in" onchange="admUsersFilter()"><option value="">All groups</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>O+</option><option>O-</option><option>AB+</option><option>AB-</option></select>
+                            <select id="u-avail" class="ad-in" onchange="admUsersFilter()"><option value="">Any status</option><option value="1">Available</option><option value="0">Unavailable</option></select>
+                            <button class="ad-btn" onclick="admExport('users')"><i class="fa-solid fa-file-arrow-down"></i><span>Export CSV</span></button>
+                        </div>
+                        <div class="ad-card ad-tcard">
+                            <div class="ad-tw"><table class="ad-table">
+                                <thead><tr><th>Member</th><th>Blood</th><th>Role</th><th>District</th><th>Status</th><th>Donations</th><th>Joined</th><th class="r">Actions</th></tr></thead>
+                                <tbody id="users-table-body"></tbody>
+                            </table></div>
+                            <div id="users-loader" class="ad-load hidden"><div class="loader inline-block"></div></div>
+                            <div class="ad-pager" id="u-pager"></div>
+                        </div>
+                    </section>
+
+                    <!-- REQUESTS -->
+                    <section id="view-reqs" class="ad-view hidden">
+                        <div class="ad-bar">
+                            <div class="ad-tabs" id="r-tabs"></div>
+                            <div class="ad-search"><i class="fa-solid fa-magnifying-glass"></i><input id="r-q" type="text" placeholder="Search patient, hospital, phone or location" oninput="admReqsFilter()"></div>
+                            <button class="ad-btn" onclick="admExport('reqs')"><i class="fa-solid fa-file-arrow-down"></i><span>Export CSV</span></button>
+                        </div>
+                        <div class="ad-card ad-tcard">
+                            <div class="ad-tw"><table class="ad-table">
+                                <thead><tr><th>Patient</th><th>Blood</th><th>Hospital / location</th><th>Contact</th><th>Needed by</th><th>Status</th><th>Posted</th><th class="r">Actions</th></tr></thead>
+                                <tbody id="reqs-body"></tbody>
+                            </table></div>
+                            <div id="reqs-loader" class="ad-load hidden"><div class="loader inline-block"></div></div>
+                            <div class="ad-pager" id="r-pager"></div>
+                        </div>
+                    </section>
+
+                    <!-- DONATIONS -->
+                    <section id="view-dons" class="ad-view hidden">
+                        <div class="ad-bar">
+                            <div class="ad-search"><i class="fa-solid fa-magnifying-glass"></i><input id="d-q" type="text" placeholder="Search donor or patient" oninput="admDonsFilter()"></div>
+                            <span class="ad-muted" id="d-total"></span>
+                        </div>
+                        <div class="ad-card ad-tcard">
+                            <div class="ad-tw"><table class="ad-table">
+                                <thead><tr><th>Date</th><th>Donor</th><th>Blood</th><th>Patient helped</th><th>Status</th></tr></thead>
+                                <tbody id="dons-body"></tbody>
+                            </table></div>
+                            <div id="dons-loader" class="ad-load hidden"><div class="loader inline-block"></div></div>
+                            <div class="ad-pager" id="d-pager"></div>
+                        </div>
+                    </section>
+
+                    <!-- TEAM -->
+                    <section id="view-team" class="ad-view hidden">
+                        <div class="ad-card" style="padding:16px;margin-bottom:16px">
+                            <div class="ad-ch" style="padding:0;border:0;margin-bottom:12px"><h3>Add team member</h3></div>
+                            <div class="ad-form3">
+                                <input type="text" id="team-name-input" placeholder="Full name" class="ad-in">
+                                <input type="text" id="team-role-input" placeholder="Role (e.g. Volunteer)" class="ad-in">
+                                <input type="text" id="team-img-input" placeholder="Image URL (optional)" class="ad-in">
+                                <button onclick="adminAddTeam()" class="ad-btn ad-btn-p"><i class="fa-solid fa-plus"></i><span>Add</span></button>
+                            </div>
+                        </div>
+                        <div class="ad-team" id="admin-team-grid"></div>
+                        <div id="team-loader" class="ad-load hidden"><div class="loader inline-block"></div></div>
+                    </section>
+                </main>
+            </div>
+
+            <!-- Modal host -->
+            <div id="ad-modal" class="ad-ov hidden" onclick="if(event.target===this)admCloseModal()"><div class="ad-md" id="ad-modal-box"></div></div>
+        </div>
+
+
+    <div id="toast"></div>
+
+    <script type="module">
+        
+import { createClient } from "https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm";
+
+// ============================================================
+// BenapoleBlood — Supabase backend (converted from Firebase)
+// User + admin share this same project, database and login.
+// ============================================================
+const SUPABASE_URL = "https://batwzzkxkvnshttxnwdy.supabase.co";
+const SUPABASE_KEY = "sb_publishable_dOepnSqquQRV3AX8DnXkEQ_fjVVnzrh";
+const sb = createClient(SUPABASE_URL, SUPABASE_KEY);
+window.__sb = sb;
+const auth = { currentUser: null };
+const db = { __supabase: true };
+
+// ---------- Firestore-compatible data layer over Supabase ----------
+const __TABLE = { users: 'profiles', requests: 'requests', donations: 'donations', team: 'team' };
+const __TO_COL = { donationCount: 'donation_count', createdAt: 'created_at', updatedAt: 'updated_at', createdBy: 'created_by', isEmergency: 'is_emergency', donorId: 'donor_id', requestId: 'request_id' };
+const __TO_FIELD = Object.fromEntries(Object.entries(__TO_COL).map(([k, v]) => [v, k]));
+const __col = n => __TO_COL[n] || n;
+const __field = c => __TO_FIELD[c] || c;
+const __isTsField = (table, f) => f === 'createdAt' || f === 'updatedAt' || (table === 'donations' && f === 'date');
+function __makeTs(v) { if (v == null) return v; const d = new Date(v); if (isNaN(d)) return v; return { seconds: Math.floor(d.getTime() / 1000), nanoseconds: 0, toDate: () => new Date(d.getTime()) }; }
+function __toRow(table, data) { const row = {}; for (const [k, v] of Object.entries(data || {})) { if (table === 'users' && k === 'uid') continue; row[__col(k)] = v instanceof Date ? v.toISOString() : v; } return row; }
+function __toData(table, row) { if (!row) return undefined; const out = {}; for (const [c, v] of Object.entries(row)) { const f = __field(c); out[f] = __isTsField(table, f) ? __makeTs(v) : v; } if (table === 'users') out.uid = row.id; return out; }
+function collection(_db, name) { return { __ref: 'col', name }; }
+function doc(_db, name, id) { return { __ref: 'doc', name, id }; }
+function where(field, op, value) { return { __w: 1, field, op, value }; }
+function orderBy(field, dir) { return { __o: 1, field, dir }; }
+function limit(n) { return { __l: 1, n }; }
+function query(ref, ...cs) { return { __ref: 'query', name: ref.name, cs }; }
+function increment(n) { return { __increment: n }; }
+async function __runQuery(q) {
+  const table = __TABLE[q.name] || q.name;
+  let qb = sb.from(table).select('*');
+  const cs = q.__ref === 'query' ? (q.cs || []) : [];
+  for (const c of cs) if (c.__w) { if (c.op !== '==') throw new Error('Unsupported filter: ' + c.op); qb = qb.eq(__col(c.field), c.value); }
+  for (const c of cs) if (c.__l) qb = qb.limit(c.n);
+  const { data, error } = await qb; if (error) throw error;
+  const docs = (data || []).map(r => ({ id: r.id, data: () => __toData(q.name, r), exists: () => true }));
+  return { docs, empty: docs.length === 0, size: docs.length, forEach: cb => docs.forEach(cb) };
+}
+function getDocs(q) { return __runQuery(q); }
+async function getDoc(ref) { const table = __TABLE[ref.name] || ref.name; const { data, error } = await sb.from(table).select('*').eq('id', ref.id).maybeSingle(); if (error) throw error; return { id: ref.id, exists: () => !!data, data: () => data ? __toData(ref.name, data) : undefined }; }
+async function setDoc(ref, dataIn) { const table = __TABLE[ref.name] || ref.name; const row = __toRow(ref.name, dataIn); row.id = ref.id; const { error } = await sb.from(table).upsert(row); if (error) throw error; return { id: ref.id }; }
+async function addDoc(colRef, dataIn) { const table = __TABLE[colRef.name] || colRef.name; const row = __toRow(colRef.name, dataIn); const { data, error } = await sb.from(table).insert(row).select('id').single(); if (error) throw error; return { id: data.id }; }
+async function updateDoc(ref, dataIn) {
+  const table = __TABLE[ref.name] || ref.name; const row = {};
+  for (const [k, v] of Object.entries(dataIn || {})) {
+    const c = __col(k);
+    if (v && typeof v === 'object' && '__increment' in v) {
+      const { data: cur } = await sb.from(table).select(c).eq('id', ref.id).maybeSingle();
+      row[c] = ((cur && cur[c]) || 0) + v.__increment;
+    } else row[c] = v instanceof Date ? v.toISOString() : v;
+  }
+  const { error } = await sb.from(table).update(row).eq('id', ref.id); if (error) throw error;
+}
+async function deleteDoc(ref) { const table = __TABLE[ref.name] || ref.name; const { error } = await sb.from(table).delete().eq('id', ref.id); if (error) throw error; }
+function onSnapshot(q, cb, errCb) { let stopped = false; const run = async () => { if (stopped) return; try { cb(await __runQuery(q)); } catch (e) { if (errCb) errCb(e); } }; run(); const iv = setInterval(run, 20000); return () => { stopped = true; clearInterval(iv); }; }
+
+// ---------- Firebase Auth-compatible layer over Supabase Auth ----------
+function __mapUser(u) { return u ? { uid: u.id, email: u.email } : null; }
+async function createUserWithEmailAndPassword(_a, email, password) { const { data, error } = await sb.auth.signUp({ email, password }); if (error) throw error; auth.currentUser = __mapUser(data.user); return { user: __mapUser(data.user) }; }
+async function signInWithEmailAndPassword(_a, email, password) { const { data, error } = await sb.auth.signInWithPassword({ email, password }); if (error) throw error; auth.currentUser = __mapUser(data.user); return { user: __mapUser(data.user) }; }
+async function signInAnonymously() { throw new Error('Anonymous sign-in is not used in BenapoleBlood Supabase version'); }
+async function signOut(_a) { const { error } = await sb.auth.signOut(); auth.currentUser = null; if (error) throw error; }
+function onAuthStateChanged(_a, cb) {
+  let lastKey = '__unset';
+  const emit = u => { const k = u ? u.uid : null; if (k === lastKey) return; lastKey = k; try { cb(u); } catch (e) { console.error(e); } };
+  sb.auth.getSession().then(({ data }) => { const u = __mapUser(data.session?.user || null); auth.currentUser = u; emit(u); }).catch(() => emit(null));
+  const { data: sub } = sb.auth.onAuthStateChange((_ev, session) => { const u = __mapUser(session?.user || null); auth.currentUser = u; emit(u); });
+  return () => sub.subscription.unsubscribe();
+}
+async function __sbCurrentProfile() { const { data } = await sb.auth.getSession(); if (!data.session) return null; const u = __mapUser(data.session.user); const snap = await getDoc(doc(null, 'users', u.uid)); return { user: u, profile: snap.exists() ? snap.data() : null }; }
+window.__sbCurrentProfile = __sbCurrentProfile;
+
+// (Supabase client, auth and db are set up in the layer above)
+        let currentUserData = null;
+
+        // --- 64 DISTRICT DATA ---
+        const districtOptionsHTML = `
+            <optgroup label="Dhaka Division">
+                <option value="Dhaka">Dhaka</option>
+                <option value="Faridpur">Faridpur</option>
+                <option value="Gazipur">Gazipur</option>
+                <option value="Gopalganj">Gopalganj</option>
+                <option value="Kishoreganj">Kishoreganj</option>
+                <option value="Madaripur">Madaripur</option>
+                <option value="Manikganj">Manikganj</option>
+                <option value="Munshiganj">Munshiganj</option>
+                <option value="Narayanganj">Narayanganj</option>
+                <option value="Narsingdi">Narsingdi</option>
+                <option value="Rajbari">Rajbari</option>
+                <option value="Shariatpur">Shariatpur</option>
+                <option value="Tangail">Tangail</option>
+            </optgroup>
+            <optgroup label="Chattogram Division">
+                <option value="Bandarban">Bandarban</option>
+                <option value="Brahmanbaria">Brahmanbaria</option>
+                <option value="Chandpur">Chandpur</option>
+                <option value="Chattogram">Chattogram</option>
+                <option value="Comilla">Comilla</option>
+                <option value="Cox's Bazar">Cox's Bazar</option>
+                <option value="Feni">Feni</option>
+                <option value="Khagrachhari">Khagrachhari</option>
+                <option value="Lakshmipur">Lakshmipur</option>
+                <option value="Noakhali">Noakhali</option>
+                <option value="Rangamati">Rangamati</option>
+            </optgroup>
+            <optgroup label="Rajshahi Division">
+                <option value="Bogura">Bogura</option>
+                <option value="Chapainawabganj">Chapainawabganj</option>
+                <option value="Joypurhat">Joypurhat</option>
+                <option value="Naogaon">Naogaon</option>
+                <option value="Natore">Natore</option>
+                <option value="Pabna">Pabna</option>
+                <option value="Rajshahi">Rajshahi</option>
+                <option value="Sirajganj">Sirajganj</option>
+            </optgroup>
+            <optgroup label="Khulna Division">
+                <option value="Bagerhat">Bagerhat</option>
+                <option value="Chuadanga">Chuadanga</option>
+                <option value="Jashore">Jashore</option>
+                <option value="Jhenaidah">Jhenaidah</option>
+                <option value="Khulna">Khulna</option>
+                <option value="Kushtia">Kushtia</option>
+                <option value="Magura">Magura</option>
+                <option value="Meherpur">Meherpur</option>
+                <option value="Narail">Narail</option>
+                <option value="Satkhira">Satkhira</option>
+            </optgroup>
+            <optgroup label="Barishal Division">
+                <option value="Barguna">Barguna</option>
+                <option value="Barishal">Barishal</option>
+                <option value="Bhola">Bhola</option>
+                <option value="Jhalokati">Jhalokati</option>
+                <option value="Patuakhali">Patuakhali</option>
+                <option value="Pirojpur">Pirojpur</option>
+            </optgroup>
+            <optgroup label="Sylhet Division">
+                <option value="Habiganj">Habiganj</option>
+                <option value="Moulvibazar">Moulvibazar</option>
+                <option value="Sunamganj">Sunamganj</option>
+                <option value="Sylhet">Sylhet</option>
+            </optgroup>
+            <optgroup label="Rangpur Division">
+                <option value="Dinajpur">Dinajpur</option>
+                <option value="Gaibandha">Gaibandha</option>
+                <option value="Kurigram">Kurigram</option>
+                <option value="Lalmonirhat">Lalmonirhat</option>
+                <option value="Nilphamari">Nilphamari</option>
+                <option value="Panchagarh">Panchagarh</option>
+                <option value="Rangpur">Rangpur</option>
+                <option value="Thakurgaon">Thakurgaon</option>
+            </optgroup>
+            <optgroup label="Mymensingh Division">
+                <option value="Jamalpur">Jamalpur</option>
+                <option value="Mymensingh">Mymensingh</option>
+                <option value="Netrokona">Netrokona</option>
+                <option value="Sherpur">Sherpur</option>
+            </optgroup>
+        `;
+
+        function esc(v) { return String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+        function showToast(msg) { const t = document.getElementById('toast'); t.innerText = msg; t.style.opacity = '1'; clearTimeout(window._tt); window._tt = setTimeout(() => t.style.opacity = '0', 3000); }
+        const offlineBanner = document.getElementById('offline-banner');
+        const syncOnline = () => offlineBanner.classList.toggle('show', !navigator.onLine);
+        window.addEventListener('online', syncOnline); window.addEventListener('offline', syncOnline); syncOnline();
+
+        // --- ADMIN LOGIN (Supabase Auth + role check) ---
+        const lgErr = m => { const e = document.getElementById('lg-err'); e.innerText = m || ''; e.classList.toggle('hidden', !m); };
+        function openDashboard(profile) {
+            currentUserData = profile || { name: 'Administrator', email: '' };
+            showAdminPanel();
+        }
+        window.adminLogin = async () => {
+            const email = (document.getElementById('lg-email')?.value || '').trim();
+            const pass = document.getElementById('lg-pass').value;
+            if (!email || !pass) return lgErr('Enter admin email and password.');
+            const btn = document.getElementById('lg-btn'); if (btn) btn.disabled = true;
+            try {
+                await signInWithEmailAndPassword(auth, email, pass);
+                const snap = await getDoc(doc(db, 'users', auth.currentUser.uid));
+                if (!snap.exists() || snap.data().role !== 'admin') { await signOut(auth).catch(() => {}); return lgErr('This is not an admin account.'); }
+                lgErr(''); document.getElementById('lg-pass').value = '';
+                openDashboard(snap.data());
+            } catch (e) { lgErr('Invalid email or password.'); }
+            finally { if (btn) btn.disabled = false; }
+        };
+        window.handleLogout = () => { signOut(auth).catch(() => {}).finally(() => location.reload()); };
+
+
+        // --- ADMIN PANEL (v2) ---
+        const ADM = { users: [], reqs: [], dons: [], team: [], loaded: {} };
+        const ADV = { users: { page: 1, rows: [] }, reqs: { page: 1, rows: [], tab: 'all' }, dons: { page: 1, rows: [] } };
+        const PAGE = 12;
+        const AD_TITLES = {
+            dash: ['Overview', 'Platform summary and recent activity'],
+            reqs: ['Requests', 'Review, close and moderate blood requests'],
+            users: ['Members', 'Manage donors, receivers and admins'],
+            dons: ['Donations', 'Verified donation records'],
+            team: ['Team', 'People shown on the public volunteers list']
+        };
+        const tms = v => v?.seconds ? v.seconds * 1000 : (v?.toDate ? v.toDate().getTime() : (v instanceof Date ? v.getTime() : 0));
+        const fdate = ms => ms ? new Date(ms).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) : '-';
+        const initials = n => (String(n || '?').trim()[0] || '?');
+        const $a = id => document.getElementById(id);
+
+        function showAdminPanel() {
+            $a('login-page').classList.add('hidden');
+            $a('admin-panel').classList.remove('hidden');
+            const me = currentUserData || {};
+            $a('ad-me-name').innerText = me.name || 'Admin';
+            $a('ad-me-mail').innerText = me.email || '';
+            $a('ad-me-av').innerText = initials(me.name || 'A').toUpperCase();
+            adminNav('dash');
+        }
+
+        window.toggleMobileMenu = () => {
+            $a('adm-sidebar').classList.toggle('open');
+            $a('ad-overlay').classList.toggle('open');
+        };
+
+        async function admLoad(name, force) {
+            if (ADM.loaded[name] && !force) return ADM[name];
+            const col = { users: 'users', reqs: 'requests', dons: 'donations', team: 'team' }[name];
+            const snap = await getDocs(collection(db, col));
+            const arr = []; snap.forEach(d => arr.push({ id: d.id, ...d.data() }));
+            if (name === 'users') arr.sort((a, b) => tms(b.createdAt) - tms(a.createdAt));
+            if (name === 'reqs') arr.sort((a, b) => tms(b.createdAt) - tms(a.createdAt));
+            if (name === 'dons') arr.sort((a, b) => tms(b.date) - tms(a.date));
+            ADM[name] = arr; ADM.loaded[name] = true;
+            return arr;
+        }
+
+        window.adminNav = async (view) => {
+            ['dash', 'users', 'reqs', 'dons', 'team'].forEach(v => {
+                $a('view-' + v).classList.toggle('hidden', v !== view);
+                $a('nav-' + v).classList.toggle('on', v === view);
+            });
+            $a('ad-title').innerText = AD_TITLES[view][0];
+            $a('ad-sub').innerText = AD_TITLES[view][1];
+            $a('adm-sidebar').classList.remove('open'); $a('ad-overlay').classList.remove('open');
+            window.admView = view;
+            try {
+                if (view === 'dash') { await Promise.all([admLoad('users'), admLoad('reqs'), admLoad('dons')]); renderDash(); }
+                if (view === 'users') { $a('users-loader').classList.remove('hidden'); await admLoad('users'); await admLoad('dons'); $a('users-loader').classList.add('hidden'); admUsersFilter(true); }
+                if (view === 'reqs') { $a('reqs-loader').classList.remove('hidden'); await admLoad('reqs'); $a('reqs-loader').classList.add('hidden'); admReqsFilter(true); }
+                if (view === 'dons') { $a('dons-loader').classList.remove('hidden'); await Promise.all([admLoad('dons'), admLoad('users')]); $a('dons-loader').classList.add('hidden'); admDonsFilter(true); }
+                if (view === 'team') { $a('team-loader').classList.remove('hidden'); await admLoad('team'); $a('team-loader').classList.add('hidden'); renderTeam(); }
+            } catch (e) { console.error(e); showToast('Could not load data'); ['users', 'reqs', 'dons', 'team'].forEach(k => $a(k + '-loader')?.classList.add('hidden')); }
+            updateNavCount();
+        };
+
+        window.admRefresh = async () => {
+            const ic = $a('ad-refresh-ic'); ic.style.animation = 'spin 1s linear infinite';
+            ADM.loaded = {};
+            await adminNav(window.admView || 'dash');
+            ic.style.animation = ''; showToast('Data refreshed');
+        };
+
+        function updateNavCount() {
+            const n = ADM.reqs.filter(r => r.status === 'active').length;
+            const el = $a('nav-reqs-count'); el.innerText = n; el.classList.toggle('hidden', !n);
+        }
+
+        // ---------- Overview ----------
+        function renderDash() {
+            const U = ADM.users, R = ADM.reqs, D = ADM.dons;
+            const donors = U.filter(u => u.role === 'donor');
+            const avail = donors.filter(u => u.available);
+            const active = R.filter(r => r.status === 'active'), done = R.filter(r => r.status === 'completed');
+            const emer = active.filter(r => r.isEmergency);
+            const k = (cls, ic, label, val, sub) => `<div class="ad-kpi"><div class="ic ${cls}"><i class="fa-solid ${ic}"></i></div><div><p>${label}</p><b>${val}</b><small>${sub}</small></div></div>`;
+            $a('ad-kpis').innerHTML =
+                k('t-teal', 'fa-users', 'Total members', U.length, donors.length + ' donors') +
+                k('t-green', 'fa-hand-holding-medical', 'Available donors', avail.length, 'of ' + donors.length + ' registered') +
+                k('t-red', 'fa-droplet', 'Active requests', active.length, emer.length + ' emergency') +
+                k('t-amber', 'fa-circle-check', 'Fulfilled requests', done.length, R.length + ' total') +
+                k('t-purple', 'fa-heart-pulse', 'Donations logged', D.length, 'verified records');
+            // blood bars
+            const groups = ['A+', 'A-', 'B+', 'B-', 'O+', 'O-', 'AB+', 'AB-'];
+            const counts = groups.map(g => donors.filter(u => u.blood === g).length), max = Math.max(1, ...counts);
+            $a('ad-bg-note').innerText = donors.length + ' donors';
+            $a('ad-bg-bars').innerHTML = groups.map((g, i) => `<div class="ad-brow"><b>${g}</b><div class="ad-track"><div style="width:${counts[i] / max * 100}%"></div></div><span>${counts[i]}</span></div>`).join('');
+            // fulfilment
+            const total = R.length, rate = total ? Math.round(done.length / total * 100) : 0;
+            const seg = (n, c) => total ? `<div style="width:${n / total * 100}%;background:${c}"></div>` : '';
+            $a('ad-fulfil').innerHTML = `<div class="ad-fu"><div class="big">${rate}%<small>fulfilment rate</small></div>
+                <div class="ad-seg">${seg(done.length, '#16A34A')}${seg(active.length - emer.length, '#0E7490')}${seg(emer.length, '#D64545')}</div>
+                <div class="ad-legend"><span><i style="background:#16A34A"></i>Completed ${done.length}</span><span><i style="background:#0E7490"></i>Standard ${active.length - emer.length}</span><span><i style="background:#D64545"></i>Emergency ${emer.length}</span></div></div>`;
+            // recent
+            $a('ad-recent-reqs').innerHTML = R.slice(0, 5).map(r => `<div><div class="bx">${esc(r.blood)}</div><div class="tx"><b>${esc(r.patient)}</b><span>${esc(r.hospital || '')}${r.hospital && r.location ? ', ' : ''}${esc(r.location || '')}</span></div>${reqPill(r)}</div>`).join('') || '<div class="ad-empty">No requests yet</div>';
+            $a('ad-recent-users').innerHTML = U.slice(0, 5).map(u => `<div><div class="bx" style="background:#E3F2F6;color:#0E7490">${esc(u.blood || '-')}</div><div class="tx"><b>${esc(u.name || 'No name')}</b><span>${esc(u.district || '-')} \u00B7 ${fdate(tms(u.createdAt))}</span></div>${rolePill(u.role)}</div>`).join('') || '<div class="ad-empty">No members yet</div>';
+        }
+
+        function pill(t, c, dot) { return `<span class="ad-pill ${c}">${dot ? '<i></i>' : ''}${t}</span>`; }
+        function reqPill(r) {
+            if (r.status === 'completed') return pill('Completed', 't-green');
+            return r.isEmergency ? pill('Emergency', 't-red', 1) : pill('Active', 't-teal');
+        }
+        function rolePill(role) { return pill(esc(role || 'user'), role === 'admin' ? 't-purple' : (role === 'donor' ? 't-teal' : 't-gray')); }
+
+        function pager(id, st, total, fn) {
+            const pages = Math.max(1, Math.ceil(total / PAGE)), el = $a(id);
+            if (total <= PAGE) { el.innerHTML = ''; return; }
+            const from = (st.page - 1) * PAGE + 1, to = Math.min(total, st.page * PAGE);
+            el.innerHTML = `<span>${from}-${to} of ${total}</span><div><button class="ad-btn" ${st.page <= 1 ? 'disabled' : ''} onclick="${fn}(-1)"><i class="fa-solid fa-chevron-left"></i></button><button class="ad-btn" ${st.page >= pages ? 'disabled' : ''} onclick="${fn}(1)"><i class="fa-solid fa-chevron-right"></i></button></div>`;
+        }
+
+        // ---------- Members ----------
+        window.admUsersFilter = (keep) => {
+            const q = $a('u-q').value.toLowerCase().trim(), role = $a('u-role').value, bl = $a('u-blood').value, av = $a('u-avail').value;
+            ADV.users.rows = ADM.users.filter(u =>
+                (!role || u.role === role) && (!bl || u.blood === bl) &&
+                (av === '' || (av === '1' ? u.available : !u.available)) &&
+                (!q || [u.name, u.email, u.phone, u.district].some(x => String(x || '').toLowerCase().includes(q))));
+            if (keep !== true) ADV.users.page = 1;
+            renderUsers();
+        };
+        function renderUsers() {
+            const st = ADV.users, rows = st.rows.slice((st.page - 1) * PAGE, st.page * PAGE), me = auth.currentUser?.uid;
+            $a('users-table-body').innerHTML = rows.map(u => `<tr>
+                <td><div class="ad-who"><div class="av">${esc(initials(u.name))}</div><div><b>${esc(u.name || 'No name')}</b><span>${esc(u.email || u.phone || '')}</span></div></div></td>
+                <td><span class="ad-bl">${esc(u.blood || '-')}</span></td>
+                <td>${rolePill(u.role)}</td>
+                <td>${esc(u.district || '-')}</td>
+                <td>${u.role === 'donor' ? (u.available ? pill('Available', 't-green', 1) : pill('Unavailable', 't-gray', 1)) : '<span class="ad-muted">-</span>'}</td>
+                <td>${u.donationCount || 0}</td>
+                <td>${fdate(tms(u.createdAt))}</td>
+                <td class="r"><button class="ad-ib" title="Edit" onclick="admEditUser('${u.id}')"><i class="fa-solid fa-pen"></i></button>${u.role !== 'admin' && u.id !== me ? `<button class="ad-ib dg" title="Delete" onclick="adminDeleteData('users','${u.id}')"><i class="fa-solid fa-trash"></i></button>` : ''}</td>
+            </tr>`).join('') || '<tr><td colspan="8"><div class="ad-empty">No members match these filters</div></td></tr>';
+            pager('u-pager', st, st.rows.length, 'admUsersPage');
+        }
+        window.admUsersPage = d => { ADV.users.page += d; renderUsers(); };
+
+        window.admEditUser = (id) => {
+            const u = ADM.users.find(x => x.id === id); if (!u) return;
+            const self = id === auth.currentUser?.uid;
+            admModal(`<div class="ad-mh"><h3>Edit member</h3><p>${esc(u.email || '')}</p></div>
+              <div class="ad-mb">
+                <div><label>Full name</label><input id="eu-name" class="ad-in" value="${esc(u.name || '')}"></div>
+                <div><label>Phone</label><input id="eu-phone" class="ad-in" value="${esc(u.phone || '')}"></div>
+                <div><label>District</label><select id="eu-district" class="ad-in district-select"><option value="">Select district</option>${districtOptionsHTML}</select></div>
+                <div><label>Role</label><select id="eu-role" class="ad-in" ${self ? 'disabled' : ''}><option value="donor">Donor</option><option value="receiver">Receiver</option><option value="admin">Admin</option></select></div>
+                <div><label>Donation count</label><input id="eu-count" type="number" min="0" class="ad-in" value="${u.donationCount || 0}"></div>
+                <label class="ad-chk"><input type="checkbox" id="eu-avail" ${u.available ? 'checked' : ''}>Available to donate</label>
+              </div>
+              <div class="ad-mf"><button class="ad-btn" onclick="admCloseModal()">Cancel</button><button class="ad-btn ad-btn-p" id="eu-save" onclick="admSaveUser('${id}')">Save changes</button></div>`);
+            $a('eu-district').value = u.district || ''; $a('eu-role').value = u.role || 'donor';
+        };
+        window.admSaveUser = async (id) => {
+            const name = $a('eu-name').value.trim(), phone = $a('eu-phone').value.trim(), district = $a('eu-district').value;
+            const role = $a('eu-role').value, count = Math.max(0, parseInt($a('eu-count').value) || 0), available = $a('eu-avail').checked;
+            if (!name) return showToast('Name is required');
+            const u = ADM.users.find(x => x.id === id);
+            if (role === 'admin' && u.role !== 'admin' && !(await admConfirm('Grant admin access?', 'This member will be able to manage all data in the admin console.', 'Grant access'))) return;
+            const btn = $a('eu-save'); btn.disabled = true;
+            try {
+                const data = { name, phone, district, donationCount: count, available };
+                if (id !== auth.currentUser?.uid) data.role = role;
+                await updateDoc(doc(db, 'users', id), data);
+                Object.assign(u, data); admCloseModal(); renderUsers(); showToast('Member updated');
+            } catch (e) { console.error(e); showToast('Could not save changes'); btn.disabled = false; }
+        };
+
+        // ---------- Requests ----------
+        function reqTabCounts() {
+            const R = ADM.reqs;
+            return { all: R.length, active: R.filter(r => r.status === 'active').length, emergency: R.filter(r => r.status === 'active' && r.isEmergency).length, completed: R.filter(r => r.status === 'completed').length };
+        }
+        window.admReqTab = t => { ADV.reqs.tab = t; ADV.reqs.page = 1; admReqsFilter(true); };
+        window.admReqsFilter = (keep) => {
+            const q = $a('r-q').value.toLowerCase().trim(), tab = ADV.reqs.tab, c = reqTabCounts();
+            $a('r-tabs').innerHTML = [['all', 'All'], ['active', 'Active'], ['emergency', 'Emergency'], ['completed', 'Completed']].map(([k, l]) => `<button class="${tab === k ? 'on' : ''}" onclick="admReqTab('${k}')">${l}<em>${c[k]}</em></button>`).join('');
+            ADV.reqs.rows = ADM.reqs.filter(r =>
+                (tab === 'all' || (tab === 'active' && r.status === 'active') || (tab === 'emergency' && r.status === 'active' && r.isEmergency) || (tab === 'completed' && r.status === 'completed')) &&
+                (!q || [r.patient, r.hospital, r.phone, r.location, r.blood].some(x => String(x || '').toLowerCase().includes(q))));
+            if (keep !== true) ADV.reqs.page = 1;
+            renderReqs();
+        };
+        function renderReqs() {
+            const st = ADV.reqs, rows = st.rows.slice((st.page - 1) * PAGE, st.page * PAGE);
+            $a('reqs-body').innerHTML = rows.map(r => `<tr>
+                <td><div class="ad-who"><div><b>${esc(r.patient)}</b><span>${esc(r.problem || 'No details')}</span></div></div></td>
+                <td><span class="ad-bl">${esc(r.blood)}</span></td>
+                <td><div class="ad-who"><div><b>${esc(r.hospital || '-')}</b><span>${esc(r.location || '')}</span></div></div></td>
+                <td><a href="tel:${esc(r.phone)}" style="color:#0E7490;font-weight:600">${esc(r.phone || '-')}</a></td>
+                <td>${esc(r.date || '-')}</td>
+                <td>${reqPill(r)}</td>
+                <td>${fdate(tms(r.createdAt))}</td>
+                <td class="r">${r.status === 'completed'
+                    ? `<button class="ad-ib" title="Reopen" onclick="admReopen('${r.id}')"><i class="fa-solid fa-rotate-left"></i></button>`
+                    : `<button class="ad-ib ok" title="Mark complete" onclick="adminCompleteRequest('${r.id}')"><i class="fa-solid fa-check"></i></button>`}<button class="ad-ib dg" title="Delete" onclick="adminDeleteData('requests','${r.id}')"><i class="fa-solid fa-trash"></i></button></td>
+            </tr>`).join('') || '<tr><td colspan="8"><div class="ad-empty">No requests found</div></td></tr>';
+            pager('r-pager', st, st.rows.length, 'admReqsPage');
+        }
+        window.admReqsPage = d => { ADV.reqs.page += d; renderReqs(); };
+
+        window.admReopen = async (id) => {
+            if (!(await admConfirm('Reopen this request?', 'It will appear in the public feed again.', 'Reopen'))) return;
+            try {
+                await updateDoc(doc(db, 'requests', id), { status: 'active', completedAt: null, completedByDonor: null });
+                const r = ADM.reqs.find(x => x.id === id); Object.assign(r, { status: 'active', completedAt: null, completedByDonor: null });
+                admReqsFilter(true); updateNavCount(); showToast('Request reopened');
+            } catch (e) { showToast('Could not reopen'); }
+        };
+
+        window.adminCompleteRequest = (reqId) => {
+            const r = ADM.reqs.find(x => x.id === reqId); if (!r) return;
+            admModal(`<div class="ad-mh"><h3>Complete request</h3><p>Close the request for <b>${esc(r.patient)}</b>. Optionally credit the donor who gave blood.</p></div>
+              <div class="ad-mb">
+                <div><label>Donor phone number (optional)</label><input id="cr-phone" class="ad-in" type="tel" placeholder="e.g. 01XXXXXXXXX" oninput="admDonorLookup()"></div>
+                <div class="ad-note" id="cr-note">Leave empty to close without crediting a donor.</div>
+              </div>
+              <div class="ad-mf"><button class="ad-btn" onclick="admCloseModal()">Cancel</button><button class="ad-btn ad-btn-p" id="cr-go" onclick="admDoComplete('${reqId}')">Mark as completed</button></div>`);
+        };
+        window.admDonorLookup = () => {
+            const p = $a('cr-phone').value.trim(), n = $a('cr-note');
+            if (!p) { n.className = 'ad-note'; n.innerText = 'Leave empty to close without crediting a donor.'; return; }
+            const u = ADM.users.find(x => x.phone === p);
+            if (u) { n.className = 'ad-note ok'; n.innerText = 'Donor found: ' + (u.name || 'Unnamed') + ' (' + (u.blood || '-') + ', ' + (u.district || '-') + ')'; }
+            else { n.className = 'ad-note no'; n.innerText = 'No member with this number. The request will close without credit.'; }
+        };
+        window.admDoComplete = async (reqId) => {
+            const r = ADM.reqs.find(x => x.id === reqId), p = $a('cr-phone').value.trim(), btn = $a('cr-go'); btn.disabled = true;
+            try {
+                let donor = p ? ADM.users.find(x => x.phone === p) : null;
+                if (p && !donor) { const s = await getDocs(query(collection(db, 'users'), where('phone', '==', p))); if (!s.empty) donor = { id: s.docs[0].id, ...s.docs[0].data() }; }
+                if (donor) {
+                    await updateDoc(doc(db, 'users', donor.id), { donationCount: increment(1) });
+                    await addDoc(collection(db, 'donations'), { donorId: donor.id, requestId: reqId, patient: r.patient, date: new Date(), status: 'verified' });
+                    donor.donationCount = (donor.donationCount || 0) + 1; ADM.loaded.dons = false;
+                }
+                await updateDoc(doc(db, 'requests', reqId), { status: 'completed', completedByDonor: donor ? donor.id : null, completedAt: new Date() });
+                Object.assign(r, { status: 'completed', completedByDonor: donor ? donor.id : null });
+                admCloseModal(); admReqsFilter(true); updateNavCount();
+                showToast(donor ? 'Request completed, donor credited' : 'Request completed');
+            } catch (e) { console.error(e); showToast('Error completing request'); btn.disabled = false; }
+        };
+
+        // ---------- Donations ----------
+        window.admDonsFilter = (keep) => {
+            const q = $a('d-q').value.toLowerCase().trim(), um = Object.fromEntries(ADM.users.map(u => [u.id, u]));
+            ADV.dons.rows = ADM.dons.map(d => ({ ...d, donor: um[d.donorId] })).filter(d => !q || String(d.donor?.name || '').toLowerCase().includes(q) || String(d.patient || '').toLowerCase().includes(q));
+            if (keep !== true) ADV.dons.page = 1;
+            $a('d-total').innerText = ADV.dons.rows.length + ' records';
+            renderDons();
+        };
+        function renderDons() {
+            const st = ADV.dons, rows = st.rows.slice((st.page - 1) * PAGE, st.page * PAGE);
+            $a('dons-body').innerHTML = rows.map(d => `<tr>
+                <td>${fdate(tms(d.date))}</td>
+                <td><div class="ad-who"><div class="av">${esc(initials(d.donor?.name))}</div><div><b>${esc(d.donor?.name || 'Deleted member')}</b><span>${esc(d.donor?.phone || '')}</span></div></div></td>
+                <td><span class="ad-bl">${esc(d.donor?.blood || '-')}</span></td>
+                <td>${esc(d.patient || '-')}</td>
+                <td>${pill(esc(d.status || 'verified'), 't-green', 1)}</td>
+            </tr>`).join('') || '<tr><td colspan="5"><div class="ad-empty">No donation records</div></td></tr>';
+            pager('d-pager', st, st.rows.length, 'admDonsPage');
+        }
+        window.admDonsPage = d => { ADV.dons.page += d; renderDons(); };
+
+        // ---------- Team ----------
+        function renderTeam() {
+            $a('admin-team-grid').innerHTML = ADM.team.map(m => `<div class="ad-tm">
+                <div class="im">${m.image ? `<img src="${esc(m.image)}" alt="">` : '<i class="fa-solid fa-user"></i>'}</div>
+                <div class="tx"><b>${esc(m.name)}</b><span>${esc(m.role)}</span></div>
+                <button class="ad-ib dg" title="Remove" onclick="adminDeleteData('team','${m.id}')"><i class="fa-solid fa-trash"></i></button></div>`).join('') || '<div class="ad-empty" style="grid-column:1/-1">No team members yet</div>';
+        }
+        window.adminAddTeam = async () => {
+            const name = $a('team-name-input').value.trim(), role = $a('team-role-input').value.trim(), image = $a('team-img-input').value.trim();
+            if (!name || !role) return showToast('Name and role are required');
+            try {
+                await addDoc(collection(db, 'team'), { name, role, image });
+                ['team-name-input', 'team-role-input', 'team-img-input'].forEach(i => $a(i).value = '');
+                showToast('Member added'); await admLoad('team', true); renderTeam();
+            } catch (e) { console.error(e); showToast('Error adding member'); }
+        };
+
+        // ---------- Delete / modal helpers ----------
+        window.adminDeleteData = async (col, id) => {
+            const label = { users: 'member', requests: 'request', team: 'team member' }[col];
+            const note = col === 'users' ? 'Their profile record is removed. Their login account is not deleted.' : 'This cannot be undone.';
+            if (!(await admConfirm('Delete this ' + label + '?', note, 'Delete', true))) return;
+            try {
+                await deleteDoc(doc(db, col, id));
+                const key = { users: 'users', requests: 'reqs', team: 'team' }[col];
+                ADM[key] = ADM[key].filter(x => x.id !== id);
+                showToast('Deleted');
+                if (col === 'users') admUsersFilter(true); else if (col === 'requests') admReqsFilter(true); else renderTeam();
+                updateNavCount();
+            } catch (e) { showToast('Error: ' + e.message); }
+        };
+        function admModal(html) { $a('ad-modal-box').innerHTML = html; $a('ad-modal').classList.remove('hidden'); }
+        window.admCloseModal = () => { $a('ad-modal').classList.add('hidden'); if (window._admResolve) { window._admResolve(false); window._admResolve = null; } };
+        function admConfirm(title, msg, label, danger) {
+            return new Promise(res => {
+                admModal(`<div class="ad-mh"><h3>${esc(title)}</h3><p>${esc(msg)}</p></div><div class="ad-mf"><button class="ad-btn" onclick="admCloseModal()">Cancel</button><button class="ad-btn ${danger ? 'ad-btn-d' : 'ad-btn-p'}" onclick="admConfirmYes()">${esc(label)}</button></div>`);
+                window._admResolve = res;
+            });
+        }
+        window.admConfirmYes = () => { const r = window._admResolve; window._admResolve = null; $a('ad-modal').classList.add('hidden'); if (r) r(true); };
+
+        // ---------- CSV export ----------
+        window.admExport = (kind) => {
+            const rows = kind === 'users' ? ADV.users.rows : ADV.reqs.rows;
+            const cols = kind === 'users' ? ['name', 'email', 'phone', 'blood', 'role', 'district', 'available', 'donationCount'] : ['patient', 'blood', 'hospital', 'location', 'phone', 'date', 'status', 'isEmergency'];
+            const cell = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+            const csv = [cols.join(','), ...rows.map(r => cols.map(c => cell(r[c])).join(','))].join('\n');
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8' }));
+            a.download = 'benapoleblood-' + kind + '-' + new Date().toISOString().slice(0, 10) + '.csv';
+            document.body.appendChild(a); a.click(); a.remove(); showToast('Exported ' + rows.length + ' rows');
+        };
+
+
+
+        (async function boot() {
+            const splash = document.getElementById('splash');
+            try {
+                const res = await __sbCurrentProfile();
+                if (res && res.profile && res.profile.role === 'admin') { currentUserData = res.profile; showAdminPanel(); }
+                else { if (res && res.user) await signOut(auth).catch(() => {}); document.getElementById('login-page').classList.remove('hidden'); }
+            } catch (e) { document.getElementById('login-page').classList.remove('hidden'); }
+            if (splash) { splash.style.opacity = '0'; setTimeout(() => splash.style.display = 'none', 400); }
+        })();
+    </script>
+</body>
+</html>
